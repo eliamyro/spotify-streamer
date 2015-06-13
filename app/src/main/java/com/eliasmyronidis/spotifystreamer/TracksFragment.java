@@ -1,7 +1,6 @@
 package com.eliasmyronidis.spotifystreamer;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,6 +16,9 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by Elias Myronidis on 11/6/2015.
@@ -26,6 +28,7 @@ public class TracksFragment extends Fragment {
     private Track track;
     private TracksAdapter tracksAdapter;
     private ListView tracksListView;
+    private String spotifiId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,45 +42,60 @@ public class TracksFragment extends Fragment {
 
         Intent mIntent = getActivity().getIntent();
         if(mIntent != null && mIntent.hasExtra(Intent.EXTRA_TEXT)){
-            String spotifiId = mIntent.getStringExtra(Intent.EXTRA_TEXT);
+            spotifiId = mIntent.getStringExtra(Intent.EXTRA_TEXT);
             updateTrackList(spotifiId);
         }
+
+
+        SpotifyApi api = new SpotifyApi();
+        SpotifyService spotifyService = api.getService();
+
+        Map<String, Object> countryMap = new HashMap<>();
+        countryMap.put("country", "GR");
+        spotifyService.getArtistTopTrack(spotifiId, countryMap, new Callback<Tracks>() {
+            @Override
+            public void success(final Tracks tracks, Response response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(!tracks.tracks.isEmpty() == true){
+                            tracksAdapter.clear();
+                            for(Track tr :tracks.tracks){
+                                tracksAdapter.add(tr);
+                            }
+                        } else {
+                            setToastMessage(getString(R.string.no_tracks_toast));
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (error.getKind().equals(RetrofitError.Kind.NETWORK)) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setToastMessage(getString(R.string.no_internet_toast));
+                        }
+                    });
+                }
+            }
+        });
+
+
+
+
         return rootView;
     }
 
     private void updateTrackList(String spotifiId){
-        FetchTracksTask tracksTask = new FetchTracksTask();
-        tracksTask.execute(spotifiId);
+
     }
 
-    public class FetchTracksTask extends AsyncTask<String, Void, Tracks>{
-
-        private final String LOG_TAG = FetchTracksTask.class.getSimpleName();
-
-        @Override
-        protected Tracks doInBackground(String... params) {
-            SpotifyApi api = new SpotifyApi();
-            SpotifyService spotify = api.getService();
-
-            Map<String, Object> countryMap = new HashMap<>();
-            countryMap.put("country", getString(R.string.country_iso));
-            Tracks tracks = spotify.getArtistTopTrack(params[0], countryMap);
-
-            return tracks;
-        }
-
-        @Override
-        protected void onPostExecute(Tracks tracks) {
-            super.onPostExecute(tracks);
-
-            if(!tracks.tracks.isEmpty() == true){
-                tracksAdapter.clear();
-                for(Track tr :tracks.tracks){
-                    tracksAdapter.add(tr);
-                }
-            } else {
-                Toast.makeText(getActivity(),getString(R.string.no_tracks_toast), Toast.LENGTH_SHORT).show();
-            }
-        }
+    public void setToastMessage(String toastMessage) {
+        Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
     }
+
+
 }
