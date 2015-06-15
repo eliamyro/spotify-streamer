@@ -53,6 +53,7 @@ public class TracksFragment extends Fragment {
             artistName = mIntent.getStringExtra(ARTIST_NAME);
         }
 
+        // http://stackoverflow.com/questions/18320713/getsupportactionbar-from-inside-of-fragment-actionbarcompat
         ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(artistName);
 
         tracksAdapter = new TracksAdapter(getActivity(), new ArrayList<CustomTrack>());
