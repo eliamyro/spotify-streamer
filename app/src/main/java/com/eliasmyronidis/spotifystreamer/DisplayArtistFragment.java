@@ -31,8 +31,13 @@ import retrofit.client.Response;
  * Created by Elias Myronidis on 7/6/2015.
  */
 public class DisplayArtistFragment extends Fragment {
-    @InjectView(R.id.search_edit_text)EditText searchEditText;
-    @InjectView(R.id.artist_listview) ListView artistsListView;
+    @InjectView(R.id.search_edit_text)
+    EditText searchEditText;
+    @InjectView(R.id.artist_listview)
+    ListView artistsListView;
+
+    private static final String SPOTIFY_ID = "spotify_id";
+    private static final String ARTIST_NAME = "artist_name";
 
     private ArrayAdapter<CustomArtist> artistsAdapter;
     private ArrayList<CustomArtist> customArtistsList;
@@ -45,6 +50,18 @@ public class DisplayArtistFragment extends Fragment {
 
         artistsAdapter = new ArtistsAdapter(getActivity(), new ArrayList<CustomArtist>());
         artistsListView.setAdapter(artistsAdapter);
+        artistsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                   @Override
+                                                   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                       CustomArtist customArtist = artistsAdapter.getItem(position);
+                                                       Intent mIntent = new Intent(getActivity(), TracksActivity.class);
+                                                       mIntent.putExtra(SPOTIFY_ID, customArtist.getSpotifyId());
+                                                       mIntent.putExtra(ARTIST_NAME, customArtist.getArtistName());
+                                                       startActivity(mIntent);
+                                                   }
+                                               }
+        );
+
         searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -88,25 +105,13 @@ public class DisplayArtistFragment extends Fragment {
                 return false;
             }
         });
-
-        artistsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                   @Override
-                                                   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                       CustomArtist customArtist = artistsAdapter.getItem(position);
-                                                       Intent mIntent = new Intent(getActivity(), TracksActivity.class);
-                                                       mIntent.putExtra(Intent.EXTRA_TEXT, customArtist.getSpotifyId());
-                                                       startActivity(mIntent);
-                                                   }
-                                               }
-        );
-
         return rootView;
     }
 
     private void showArtists(ArrayList<CustomArtist> customArtistsList) {
 
         artistsAdapter.clear();
-        if(customArtistsList!=null){
+        if (customArtistsList != null) {
             artistsAdapter.addAll(customArtistsList);
         }
     }
@@ -118,7 +123,7 @@ public class DisplayArtistFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(customArtistsList != null){
+        if (customArtistsList != null) {
             outState.putParcelableArrayList("artists_list", customArtistsList);
         }
     }
@@ -126,7 +131,7 @@ public class DisplayArtistFragment extends Fragment {
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             customArtistsList = savedInstanceState.getParcelableArrayList("artists_list");
             showArtists(customArtistsList);
         }

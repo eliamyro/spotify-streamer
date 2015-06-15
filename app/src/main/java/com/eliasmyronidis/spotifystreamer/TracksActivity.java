@@ -36,14 +36,4 @@ public class TracksActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public boolean onSupportNavigateUp(){
-        if(!super.onSupportNavigateUp()){
-            finish();
-        }
-
-        return true;
-    }
-
 }

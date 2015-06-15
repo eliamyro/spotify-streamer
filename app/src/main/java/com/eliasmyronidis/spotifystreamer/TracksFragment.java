@@ -3,6 +3,7 @@ package com.eliasmyronidis.spotifystreamer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,26 +31,41 @@ import retrofit.client.Response;
  */
 public class TracksFragment extends Fragment {
 
-    @InjectView(R.id.track_listview)ListView tracksListView;
+    @InjectView(R.id.track_listview)
+    ListView tracksListView;
+    private static final String SPOTIFY_ID = "spotify_id";
+    private static final String ARTIST_NAME = "artist_name";
 
     private ArrayAdapter<CustomTrack> tracksAdapter;
     private ArrayList<CustomTrack> customTracksList;
     private String spotifiId;
+    private String artistName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_tracks, container, false);
-        ButterKnife.inject(this,rootView);
+        ButterKnife.inject(this, rootView);
+
+        Intent mIntent = getActivity().getIntent();
+        if (mIntent != null && mIntent.hasExtra(SPOTIFY_ID) && mIntent.hasExtra(ARTIST_NAME)) {
+            spotifiId = mIntent.getStringExtra(SPOTIFY_ID);
+            artistName = mIntent.getStringExtra(ARTIST_NAME);
+        }
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(artistName);
 
         tracksAdapter = new TracksAdapter(getActivity(), new ArrayList<CustomTrack>());
         tracksListView.setAdapter(tracksAdapter);
+        tracksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                  @Override
+                                                  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                      // TODO: Add functionality on stage 2
+                                                  }
+                                              }
+        );
 
-        Intent mIntent = getActivity().getIntent();
-        if(mIntent != null && mIntent.hasExtra(Intent.EXTRA_TEXT))
-            spotifiId = mIntent.getStringExtra(Intent.EXTRA_TEXT);
-
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             SpotifyApi api = new SpotifyApi();
             SpotifyService spotifyService = api.getService();
 
@@ -88,26 +104,15 @@ public class TracksFragment extends Fragment {
                 }
             });
         }
-
-
-        tracksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                   @Override
-                                                   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                       // TODO: Add functionality on stage 2
-                                                   }
-                                               }
-        );
-
         return rootView;
     }
 
-    private void showTopTracks(ArrayList<CustomTrack> customTracksList){
+    private void showTopTracks(ArrayList<CustomTrack> customTracksList) {
         tracksAdapter.clear();
-        if(customTracksList!=null){
+        if (customTracksList != null) {
             tracksAdapter.addAll(customTracksList);
         }
     }
-
 
     public void setToastMessage(String toastMessage) {
         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
@@ -116,7 +121,7 @@ public class TracksFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(customTracksList != null){
+        if (customTracksList != null) {
             outState.putParcelableArrayList("tracks_list", customTracksList);
         }
     }
@@ -124,11 +129,9 @@ public class TracksFragment extends Fragment {
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             customTracksList = savedInstanceState.getParcelableArrayList("tracks_list");
             showTopTracks(customTracksList);
         }
     }
-
-
 }
