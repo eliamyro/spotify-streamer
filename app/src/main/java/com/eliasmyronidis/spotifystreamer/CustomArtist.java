@@ -18,11 +18,11 @@ public class CustomArtist implements Parcelable {
 
 
     public CustomArtist(Artist artist){
-        this.artistName = artist.name;
-        this.spotifyId = artist.id;
+        artistName = artist.name;
+        spotifyId = artist.id;
         for(Image image : artist.images){
             if(image.url != null){
-                this.artistImages.add(image.url);
+                artistImages.add(image.url);
             }
         }
     }
@@ -54,7 +54,7 @@ public class CustomArtist implements Parcelable {
     public CustomArtist(Parcel in){
         artistName = in.readString();
         spotifyId = in.readString();
-        this.artistImages = in.createStringArrayList();
+        artistImages = in.createStringArrayList();
     }
 
     @Override
