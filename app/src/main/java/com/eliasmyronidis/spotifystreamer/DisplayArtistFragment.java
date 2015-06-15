@@ -114,10 +114,12 @@ public class DisplayArtistFragment extends Fragment {
         if (customArtistsList != null) {
             artistsAdapter.addAll(customArtistsList);
         }
+
     }
 
     public void setToastMessage(String toastMessage) {
-        Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
+        if (getActivity() != null)
+            Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override

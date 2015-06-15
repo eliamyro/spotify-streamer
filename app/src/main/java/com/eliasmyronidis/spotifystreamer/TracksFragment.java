@@ -116,7 +116,8 @@ public class TracksFragment extends Fragment {
     }
 
     public void setToastMessage(String toastMessage) {
-        Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
+        if(getActivity()!=null)
+            Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
