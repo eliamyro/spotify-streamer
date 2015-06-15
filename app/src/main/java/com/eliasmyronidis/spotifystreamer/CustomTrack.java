@@ -16,6 +16,7 @@ public class CustomTrack implements Parcelable {
     private String trackName;
     private String albumName;
     private ArrayList<String> albumImages = new ArrayList<>();
+    private ArrayList<String> imagesWidth = new ArrayList<>();
     private String previewUrl;
 
     public CustomTrack(Track track){
@@ -24,6 +25,7 @@ public class CustomTrack implements Parcelable {
         for(Image image : track.album.images){
             if(image.url != null){
                 albumImages.add(image.url);
+                imagesWidth.add(image.width.toString());
             }
         }
         previewUrl = track.preview_url;
@@ -53,6 +55,14 @@ public class CustomTrack implements Parcelable {
         this.albumImages = albumImages;
     }
 
+    public ArrayList<String> getImagesWidth() {
+        return imagesWidth;
+    }
+
+    public void setImagesWidth(ArrayList<String> imagesWidth) {
+        this.imagesWidth = imagesWidth;
+    }
+
     public String getPreviewUrl() {
         return previewUrl;
     }
@@ -65,6 +75,7 @@ public class CustomTrack implements Parcelable {
         trackName = in.readString();
         albumName = in.readString();
         albumImages = in.createStringArrayList();
+        imagesWidth = in.createStringArrayList();
         previewUrl = in.readString();
     }
 
@@ -78,6 +89,7 @@ public class CustomTrack implements Parcelable {
         dest.writeString(trackName);
         dest.writeString(albumName);
         dest.writeStringList(albumImages);
+        dest.writeStringList(imagesWidth);
         dest.writeString(previewUrl);
     }
 

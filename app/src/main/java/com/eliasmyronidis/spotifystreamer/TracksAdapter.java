@@ -47,30 +47,37 @@ public class TracksAdapter extends ArrayAdapter<CustomTrack> {
         String smallImage = null;
         String largeImage = null; // large image for spotify stage 2
         if (holder.albumImage != null && getItem(position).getAlbumImages().size() != 0) {
-//            for (int i = 0; i < getItem(position).getAlbumImages().size(); i++) {
-//                imageWidth = getItem(position).getAlbumImages().get(i).width;
-//                if (imageWidth == 200) {
-//                    smallImage = getItem(position).album.images.get(i).url;
-//                } else if (imageWidth == 600) {
-//                    largeImage = getItem(position).album.images.get(i).url;
-//                } else {
-//                    // We haven't found image with the desired width and we take the first image.
-//                    smallImage = getItem(position).album.images.get(0).url;
-//                    largeImage = getItem(position).album.images.get(0).url;
-//                }
-                Picasso.with(getContext()).load(getItem(position).getAlbumImages().get(0)).resize(200, 200).into(holder.albumImage);
-            //}
+            for (int i = 0; i < getItem(position).getAlbumImages().size(); i++) {
+                imageWidth = Integer.parseInt(getItem(position).getImagesWidth().get(i));
+                if (imageWidth == 200) {
+                    smallImage = getItem(position).getAlbumImages().get(i);
+                } else if (imageWidth == 600) {
+                    largeImage = getItem(position).getAlbumImages().get(i);
+                }
+
+                // We haven't found image with the desired width and we take the first image.
+                if (smallImage == null)
+                    smallImage = getItem(position).getAlbumImages().get(0);
+                else if (largeImage == null)
+                    largeImage = getItem(position).getAlbumImages().get(0);
+
+            }
+            Picasso.with(getContext()).load(smallImage).resize(200, 200).into(holder.albumImage);
         }
+
         return convertView;
     }
 
     class ViewHolder {
-        @InjectView(R.id.track_name_textview)TextView trackName;
-        @InjectView(R.id.track_album_textview)TextView albumName;
-        @InjectView(R.id.album_image)ImageView albumImage;
+        @InjectView(R.id.track_name_textview)
+        TextView trackName;
+        @InjectView(R.id.track_album_textview)
+        TextView albumName;
+        @InjectView(R.id.album_image)
+        ImageView albumImage;
 
-        public ViewHolder(View view){
-            ButterKnife.inject(this,view);
+        public ViewHolder(View view) {
+            ButterKnife.inject(this, view);
         }
 
     }
