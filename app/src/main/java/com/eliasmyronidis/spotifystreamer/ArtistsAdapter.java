@@ -10,16 +10,17 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import kaaes.spotify.webapi.android.models.Artist;
 
 /**
  * Created by Elias Myronidis on 8/6/2015.
  */
-public class ArtistsAdapter extends ArrayAdapter<Artist> {
+public class ArtistsAdapter extends ArrayAdapter<CustomArtist> {
 
-    public ArtistsAdapter(Context context, Artist artist) {
+    public ArtistsAdapter(Context context, ArrayList<CustomArtist> customArtistsList) {
         super(context, R.layout.artist_list_item);
     }
 
@@ -36,10 +37,10 @@ public class ArtistsAdapter extends ArrayAdapter<Artist> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.artistName.setText(getItem(position).name);
+        holder.artistName.setText(getItem(position).getArtistName());
         holder.artistImage.setImageResource(R.drawable.abc_btn_rating_star_on_mtrl_alpha);
-        if (holder.artistImage != null && getItem(position).images.size() != 0) {
-            Picasso.with(getContext()).load(getItem(position).images.get(0).url).resize(200, 200).into(holder.artistImage);
+        if (holder.artistImage != null && getItem(position).getArtistImages().size() != 0) {
+            Picasso.with(getContext()).load(getItem(position).getArtistImages().get(0)).resize(200, 200).into(holder.artistImage);
         }
         return convertView;
     }

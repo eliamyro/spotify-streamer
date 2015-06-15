@@ -15,6 +15,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -32,8 +34,8 @@ public class DisplayArtistFragment extends Fragment {
     @InjectView(R.id.search_edit_text)EditText searchEditText;
     @InjectView(R.id.artist_listview) ListView artistsListView;
 
-    private ArrayAdapter<Artist> artistsAdapter;
-    private Artist artist;
+    private ArrayAdapter<CustomArtist> artistsAdapter;
+    private ArrayList<CustomArtist> customArtistsList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,6 +43,8 @@ public class DisplayArtistFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_display_artist, container);
         ButterKnife.inject(this, rootView);
 
+        artistsAdapter = new ArtistsAdapter(getActivity(), new ArrayList<CustomArtist>());
+        artistsListView.setAdapter(artistsAdapter);
         searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -51,13 +55,18 @@ public class DisplayArtistFragment extends Fragment {
                     spotifyService.searchArtists(searchedArtist, new Callback<ArtistsPager>() {
                         @Override
                         public void success(final ArtistsPager artistsPager, final Response response) {
+
+                            customArtistsList = new ArrayList<CustomArtist>();
+                            for (Artist artist : artistsPager.artists.items) {
+                                customArtistsList.add(new CustomArtist(artist));
+                            }
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     if (artistsPager.artists.items.isEmpty())
                                         setToastMessage(getString(R.string.no_artist_found_toast));
                                     else {
-                                        showArtists(artistsPager);
+                                        showArtists(customArtistsList);
                                     }
                                 }
                             });
@@ -80,15 +89,12 @@ public class DisplayArtistFragment extends Fragment {
             }
         });
 
-        artist = new Artist();
-        artistsAdapter = new ArtistsAdapter(getActivity(), new Artist());
-        artistsListView.setAdapter(artistsAdapter);
         artistsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                    @Override
                                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                       artist = artistsAdapter.getItem(position);
+                                                       CustomArtist customArtist = artistsAdapter.getItem(position);
                                                        Intent mIntent = new Intent(getActivity(), TracksActivity.class);
-                                                       mIntent.putExtra(Intent.EXTRA_TEXT, artist.id.toString());
+                                                       mIntent.putExtra(Intent.EXTRA_TEXT, customArtist.getSpotifyId());
                                                        startActivity(mIntent);
                                                    }
                                                }
@@ -97,15 +103,32 @@ public class DisplayArtistFragment extends Fragment {
         return rootView;
     }
 
-    private void showArtists(ArtistsPager artistPager) {
+    private void showArtists(ArrayList<CustomArtist> customArtistsList) {
 
         artistsAdapter.clear();
-        for (Artist artist : artistPager.artists.items) {
-            artistsAdapter.add(artist);
+        if(customArtistsList!=null){
+            artistsAdapter.addAll(customArtistsList);
         }
     }
 
     public void setToastMessage(String toastMessage) {
         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(customArtistsList != null){
+            outState.putParcelableArrayList("artists_list", customArtistsList);
+        }
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if(savedInstanceState!=null){
+            customArtistsList = savedInstanceState.getParcelableArrayList("artists_list");
+            showArtists(customArtistsList);
+        }
     }
 }
