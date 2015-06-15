@@ -122,7 +122,7 @@ public class TracksFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (customTracksList != null) {
-            outState.putParcelableArrayList("tracks_list", customTracksList);
+            outState.putParcelableArrayList(getString(R.string.tracks_list), customTracksList);
         }
     }
 
@@ -130,7 +130,7 @@ public class TracksFragment extends Fragment {
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
-            customTracksList = savedInstanceState.getParcelableArrayList("tracks_list");
+            customTracksList = savedInstanceState.getParcelableArrayList(getString(R.string.tracks_list));
             showTopTracks(customTracksList);
         }
     }

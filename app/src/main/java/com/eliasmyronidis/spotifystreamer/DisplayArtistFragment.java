@@ -124,7 +124,7 @@ public class DisplayArtistFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (customArtistsList != null) {
-            outState.putParcelableArrayList("artists_list", customArtistsList);
+            outState.putParcelableArrayList(getString(R.string.artist_list), customArtistsList);
         }
     }
 
@@ -132,7 +132,7 @@ public class DisplayArtistFragment extends Fragment {
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
-            customArtistsList = savedInstanceState.getParcelableArrayList("artists_list");
+            customArtistsList = savedInstanceState.getParcelableArrayList(getString(R.string.artist_list));
             showArtists(customArtistsList);
         }
     }
