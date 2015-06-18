@@ -39,8 +39,8 @@ public class ArtistsAdapter extends ArrayAdapter<CustomArtist> {
 
         holder.artistName.setText(getItem(position).getArtistName());
         holder.artistImage.setImageResource(R.drawable.abc_btn_rating_star_on_mtrl_alpha);
-        if (holder.artistImage != null && getItem(position).getArtistImages().size() != 0) {
-            Picasso.with(getContext()).load(getItem(position).getArtistImages().get(0)).resize(200, 200).into(holder.artistImage);
+        if (holder.artistImage != null && getItem(position).getArtistImageUrl() != null) {
+            Picasso.with(getContext()).load(getItem(position).getArtistImageUrl()).resize(200, 200).into(holder.artistImage);
         }
         return convertView;
     }

@@ -3,7 +3,7 @@ package com.eliasmyronidis.spotifystreamer;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
@@ -14,18 +14,14 @@ import kaaes.spotify.webapi.android.models.Image;
 public class CustomArtist implements Parcelable {
     private String artistName;
     private String spotifyId;
-    private ArrayList<String> artistImages = new ArrayList<>();
-
+    private String artistImageUrl;
 
     public CustomArtist(Artist artist){
         artistName = artist.name;
         spotifyId = artist.id;
-        for(Image image : artist.images){
-            if(image.url != null){
-                artistImages.add(image.url);
-            }
-        }
+        artistImageUrl = getArtistImageUrl(artist.images);
     }
+
 
     public String getArtistName() {
         return artistName;
@@ -43,18 +39,37 @@ public class CustomArtist implements Parcelable {
         this.spotifyId = spotifyId;
     }
 
-    public ArrayList<String> getArtistImages() {
-        return artistImages;
+    public String getArtistImageUrl() {
+        return artistImageUrl;
     }
 
-    public void setArtistImages(ArrayList<String> artistImages) {
-        this.artistImages = artistImages;
+    public void setArtistImageUrl(String artistImageUrl) {
+        this.artistImageUrl = artistImageUrl;
+    }
+
+    private String getArtistImageUrl(List<Image> images) {
+        int i = 0;
+        boolean isFound = false;
+
+        while (i < images.size() && isFound == false) {
+            if (images.get(i).url != null) {
+                if (images.get(i).width == 200) {
+                    artistImageUrl = images.get(i).url;
+                    isFound = true;
+                }
+            }
+            i++;
+        }
+        if (isFound == false && images.size()!=0)
+            artistImageUrl = images.get(0).url;
+
+        return artistImageUrl;
     }
 
     public CustomArtist(Parcel in){
         artistName = in.readString();
         spotifyId = in.readString();
-        artistImages = in.createStringArrayList();
+        artistImageUrl = in.readString();
     }
 
     @Override
@@ -66,7 +81,7 @@ public class CustomArtist implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(artistName);
         dest.writeString(spotifyId);
-        dest.writeStringList(artistImages);
+        dest.writeString(artistImageUrl);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
