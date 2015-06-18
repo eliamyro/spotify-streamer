@@ -3,9 +3,6 @@ package com.eliasmyronidis.spotifystreamer;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-
-import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 
 /**
@@ -15,21 +12,18 @@ public class CustomTrack implements Parcelable {
 
     private String trackName;
     private String albumName;
-    private ArrayList<String> albumImages = new ArrayList<>();
-    private ArrayList<String> imagesWidth = new ArrayList<>();
+    private String smallImageUrl;
+    private String largeImageUrl;
     private String previewUrl;
 
-    public CustomTrack(Track track){
+    public CustomTrack(Track track) {
         trackName = track.name;
         albumName = track.album.name;
-        for(Image image : track.album.images){
-            if(image.url != null){
-                albumImages.add(image.url);
-                imagesWidth.add(image.width.toString());
-            }
-        }
+        smallImageUrl = getSmallImageUrl(track);
+        largeImageUrl = getLargeImageUrl(track);
         previewUrl = track.preview_url;
     }
+
 
     public String getTrackName() {
         return trackName;
@@ -47,20 +41,20 @@ public class CustomTrack implements Parcelable {
         this.albumName = albumName;
     }
 
-    public ArrayList<String> getAlbumImages() {
-        return albumImages;
+    public String getSmallImageUrl() {
+        return smallImageUrl;
     }
 
-    public void setAlbumImages(ArrayList<String> albumImages) {
-        this.albumImages = albumImages;
+    public void setSmallImageUrl(String smallImageUrl) {
+        this.smallImageUrl = smallImageUrl;
     }
 
-    public ArrayList<String> getImagesWidth() {
-        return imagesWidth;
+    public String getLargeImageUrl() {
+        return largeImageUrl;
     }
 
-    public void setImagesWidth(ArrayList<String> imagesWidth) {
-        this.imagesWidth = imagesWidth;
+    public void setLargeImageUrl(String largeImageUrl) {
+        this.largeImageUrl = largeImageUrl;
     }
 
     public String getPreviewUrl() {
@@ -71,11 +65,49 @@ public class CustomTrack implements Parcelable {
         this.previewUrl = previewUrl;
     }
 
-    public CustomTrack(Parcel in){
+    private String getSmallImageUrl(Track track) {
+        int i = 0;
+        boolean isFound = false;
+
+        while (i < track.album.images.size() && isFound == false) {
+            if (track.album.images.get(i).url != null) {
+                if (track.album.images.get(i).width == 200) {
+                    smallImageUrl = track.album.images.get(i).url;
+                    isFound = true;
+                }
+            }
+            i++;
+        }
+        if (isFound == false)
+            smallImageUrl = track.album.images.get(0).url;
+
+        return smallImageUrl;
+    }
+
+    private String getLargeImageUrl(Track track) {
+        int i = 0;
+        boolean isFound = false;
+
+        while (i < track.album.images.size() && isFound == false) {
+            if (track.album.images.get(i).url != null) {
+                if (track.album.images.get(i).width == 600) {
+                    largeImageUrl = track.album.images.get(i).url;
+                    isFound = true;
+                }
+            }
+            i++;
+        }
+        if (isFound == false)
+            largeImageUrl = track.album.images.get(0).url;
+
+        return largeImageUrl;
+    }
+
+    public CustomTrack(Parcel in) {
         trackName = in.readString();
         albumName = in.readString();
-        albumImages = in.createStringArrayList();
-        imagesWidth = in.createStringArrayList();
+        smallImageUrl = in.readString();
+        largeImageUrl = in.readString();
         previewUrl = in.readString();
     }
 
@@ -88,13 +120,12 @@ public class CustomTrack implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(trackName);
         dest.writeString(albumName);
-        dest.writeStringList(albumImages);
-        dest.writeStringList(imagesWidth);
+        dest.writeString(smallImageUrl);
+        dest.writeString(largeImageUrl);
         dest.writeString(previewUrl);
     }
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
-
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
 
         @Override
         public Object createFromParcel(Parcel source) {

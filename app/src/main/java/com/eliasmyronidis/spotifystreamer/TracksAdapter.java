@@ -7,11 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -43,28 +40,11 @@ public class TracksAdapter extends ArrayAdapter<CustomTrack> {
 
 
         holder.albumImage.setImageResource(R.drawable.abc_btn_rating_star_on_mtrl_alpha);
-        int imageWidth = 0;
-        String smallImage = null;
-        String largeImage = null; // large image for spotify stage 2
-        if (holder.albumImage != null && getItem(position).getAlbumImages().size() != 0) {
-            for (int i = 0; i < getItem(position).getAlbumImages().size(); i++) {
-                imageWidth = Integer.parseInt(getItem(position).getImagesWidth().get(i));
-                if (imageWidth == 200) {
-                    smallImage = getItem(position).getAlbumImages().get(i);
-                } else if (imageWidth == 600) {
-                    largeImage = getItem(position).getAlbumImages().get(i);
-                }
 
-                // We haven't found image with the desired width and we take the first image.
-                if (smallImage == null)
-                    smallImage = getItem(position).getAlbumImages().get(0);
-                else if (largeImage == null)
-                    largeImage = getItem(position).getAlbumImages().get(0);
+        String smallImage = getItem(position).getSmallImageUrl();
+        String largeImage = getItem(position).getLargeImageUrl(); // large image for spotify stage 2
 
-            }
-            Picasso.with(getContext()).load(smallImage).resize(200, 200).into(holder.albumImage);
-        }
-
+        Picasso.with(getContext()).load(smallImage).resize(200, 200).into(holder.albumImage);
         return convertView;
     }
 
