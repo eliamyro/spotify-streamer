@@ -1,5 +1,6 @@
 package com.eliasmyronidis.spotifystreamer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -28,7 +29,10 @@ public class TracksActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch(item.getItemId()){
             case R.id.action_settings:
-                return true;
+                    Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                    startActivity(settingsIntent);
+                    return true;
+
             case android.R.id.home:
                 onBackPressed();
                 return true;

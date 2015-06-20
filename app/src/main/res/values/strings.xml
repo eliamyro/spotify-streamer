@@ -8,4 +8,194 @@
     <string name="country_iso" translatable="false">GR</string>
     <string name="artist_list" translatable="false">artists_list</string>
     <string name="tracks_list" translatable="false">tracks_list</string>
+    <string name="pref_countries_key" translatable="false">countries</string>
+    <string name="pref_countries_label">Countries</string>
+    <string name="pref_countries_default">US</string>
+
+    <string name="country_andora">Andora</string>
+    <string name="country_argentina">Argentina</string>
+    <string name="country_australia">Australia</string>
+    <string name="country_belgium">Belgium</string>
+    <string name="country_bolivia">Bolivia</string>
+    <string name="country_brasil">Brasil</string>
+    <string name="country_bulgaria">Bulgaria</string>
+    <string name="country_canada">Canada</string>
+    <string name="country_chile">Chile</string>
+    <string name="country_colombia">Colombia</string>
+    <string name="country_costa_rica">Costa Rica</string>
+    <string name="country_cyprus">Cyprus</string>
+    <string name="country_czech_republic">Czech Republic</string>
+    <string name="country_denmark">Denmark</string>
+    <string name="country_germany">Germany</string>
+    <string name="country_ecuador">Ecuador</string>
+    <string name="country_elsalvador">El Salvador</string>
+    <string name="country_spain">Spain</string>
+    <string name="country_estonia">Estonia</string>
+    <string name="country_finland">Finland</string>
+    <string name="country_france">France</string>
+    <string name="country_guatemala">Guatemala</string>
+    <string name="country_honduras">Honduras</string>
+    <string name="country_hong_kong">Hong Kong</string>
+    <string name="country_iceland">Iceland</string>
+    <string name="country_Ireland">Ireland</string>
+    <string name="country_italy">Italy</string>
+    <string name="country_latvia">Latvia</string>
+    <string name="country_liecntenstein">Liechtenstein</string>
+    <string name="country_lithuania">Lithuania</string>
+    <string name="country_luxembourg">Luxembourg</string>
+    <string name="country_hungary">Hungary</string>
+    <string name="country_malaysia">Malaysia</string>
+    <string name="country_malta">Malta</string>
+    <string name="country_monaco">Monaco</string>
+    <string name="country_mexico">Mexico</string>
+    <string name="country_netherlands">Netherlands</string>
+    <string name="country_new_zealand">New Zealand</string>
+    <string name="country_nicaragua">Nicaragua</string>
+    <string name="country_norway">Norway</string>
+    <string name="country_panama">Panama</string>
+    <string name="country_paraguay">Paraguay</string>
+    <string name="country_peru">Peru</string>
+    <string name="country_philipines">Philipines</string>
+    <string name="country_poland">Poland</string>
+    <string name="country_portugal">Portugal</string>
+    <string name="country_dominicana">Republica Dominicana</string>
+    <string name="country_switzerland">Switzerland</string>
+    <string name="country_singapore">Singapore</string>
+    <string name="country_slovakia">Slovakia</string>
+    <string name="country_sweeden">Sweeden</string>
+    <string name="country_turkey">Turkey</string>
+    <string name="country_usa">USA</string>
+    <string name="country_uk">Inited Kingdom</string>
+    <string name="country_uruguay">Uruguay</string>
+    <string name="country_austria">Austria</string>
+    <string name="country_greece">Greece</string>
+    <string name="country_taiwan">Taiwan</string>
+
+
+
+
+
+    <string-array name="countries">
+        <item>@string/country_andora</item>
+        <item>@string/country_argentina</item>
+        <item>@string/country_australia</item>
+        <item>@string/country_belgium</item>
+        <item>@string/country_bolivia</item>
+        <item>@string/country_brasil</item>
+        <item>@string/country_bulgaria</item>
+        <item>@string/country_canada</item>
+        <item>@string/country_chile</item>
+        <item>@string/country_colombia</item>
+        <item>@string/country_costa_rica</item>
+        <item>@string/country_cyprus</item>
+        <item>@string/country_czech_republic</item>
+        <item>@string/country_denmark</item>
+        <item>@string/country_germany</item>
+        <item>@string/country_ecuador</item>
+        <item>@string/country_elsalvador</item>
+        <item>@string/country_spain</item>
+        <item>@string/country_estonia</item>
+        <item>@string/country_finland</item>
+        <item>@string/country_france</item>
+        <item>@string/country_guatemala</item>
+        <item>@string/country_honduras</item>
+        <item>@string/country_hong_kong</item>
+        <item>@string/country_iceland</item>
+        <item>@string/country_Ireland</item>
+        <item>@string/country_italy</item>
+        <item>@string/country_latvia</item>
+        <item>@string/country_liecntenstein</item>
+        <item>@string/country_lithuania</item>
+        <item>@string/country_luxembourg</item>
+        <item>@string/country_hungary</item>
+        <item>@string/country_malaysia</item>
+        <item>@string/country_malta</item>
+        <item>@string/country_monaco</item>
+        <item>@string/country_mexico</item>
+        <item>@string/country_netherlands</item>
+        <item>@string/country_new_zealand</item>
+        <item>@string/country_nicaragua</item>
+        <item>@string/country_norway</item>
+        <item>@string/country_panama</item>
+        <item>@string/country_paraguay</item>
+        <item>@string/country_peru</item>
+        <item>@string/country_philipines</item>
+        <item>@string/country_poland</item>
+        <item>@string/country_portugal</item>
+        <item>@string/country_dominicana</item>
+        <item>@string/country_switzerland</item>
+        <item>@string/country_singapore</item>
+        <item>@string/country_slovakia</item>
+        <item>@string/country_sweeden</item>
+        <item>@string/country_turkey</item>
+        <item>@string/country_usa</item>
+        <item>@string/country_uk</item>
+        <item>@string/country_uruguay</item>
+        <item>@string/country_austria</item>
+        <item>@string/country_greece</item>
+        <item>@string/country_taiwan</item>
+    </string-array>
+
+    <string-array name="countries_iso">
+        <item>AD</item>
+        <item>AR</item>
+        <item>AU</item>
+        <item>BE</item>
+        <item>BO</item>
+        <item>BR</item>
+        <item>BG</item>
+        <item>CA</item>
+        <item>CL</item>
+        <item>CO</item>
+        <item>CR</item>
+        <item>CY</item>
+        <item>CZ</item>
+        <item>DK</item>
+        <item>DE</item>
+        <item>EC</item>
+        <item>SV</item>
+        <item>ES</item>
+        <item>EE</item>
+        <item>FI</item>
+        <item>FR</item>
+        <item>GT</item>
+        <item>HN</item>
+        <item>HK</item>
+        <item>IS</item>
+        <item>IE</item>
+        <item>IT</item>
+        <item>LV</item>
+        <item>LI</item>
+        <item>LT</item>
+        <item>LU</item>
+        <item>HU</item>
+        <item>MY</item>
+        <item>MT</item>
+        <item>MC</item>
+        <item>MX</item>
+        <item>NL</item>
+        <item>NZ</item>
+        <item>NI</item>
+        <item>NO</item>
+        <item>PA</item>
+        <item>PY</item>
+        <item>PE</item>
+        <item>PH</item>
+        <item>PL</item>
+        <item>PT</item>
+        <item>DO</item>
+        <item>CH</item>
+        <item>SG</item>
+        <item>SK</item>
+        <item>SE</item>
+        <item>TR</item>
+        <item>US</item>
+        <item>UK</item>
+        <item>UY</item>
+        <item>AT</item>
+        <item>GR</item>
+        <item>TW</item>
+        <item>UK</item>
+        <item>UK</item>
+    </string-array>
 </resources>

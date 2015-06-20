@@ -1,7 +1,9 @@
 package com.eliasmyronidis.spotifystreamer;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -70,8 +72,12 @@ public class TracksFragment extends Fragment {
             SpotifyApi api = new SpotifyApi();
             SpotifyService spotifyService = api.getService();
 
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String country = sharedPref.getString(getString(R.string.pref_countries_key),
+                    getString(R.string.pref_countries_default));
+
             Map<String, Object> countryMap = new HashMap<>();
-            countryMap.put("country", "GR");
+            countryMap.put("country", country);
             spotifyService.getArtistTopTrack(spotifiId, countryMap, new Callback<Tracks>() {
                 @Override
                 public void success(final Tracks tracks, Response response) {
