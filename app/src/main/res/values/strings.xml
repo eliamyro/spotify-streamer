@@ -198,4 +198,7 @@
         <item>UK</item>
         <item>UK</item>
     </string-array>
+    <string name="title_activity_media_player">MediaPlayerActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

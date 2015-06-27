@@ -63,7 +63,8 @@ public class TracksFragment extends Fragment {
         tracksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                   @Override
                                                   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                      // TODO: Add functionality on stage 2
+                                                      Intent mIntent = new Intent(getActivity(), MediaPlayerActivity.class);
+                                                      startActivity(mIntent);
                                                   }
                                               }
         );
