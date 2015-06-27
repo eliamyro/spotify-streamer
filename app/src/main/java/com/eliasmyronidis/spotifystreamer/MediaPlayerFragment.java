@@ -16,7 +16,7 @@ public class MediaPlayerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.track_player, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
         return rootView;
     }
 }
