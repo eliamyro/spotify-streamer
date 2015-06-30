@@ -2,67 +2,88 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="100">
 
-    <TextView
-        android:id="@+id/artist_name_textview"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Coldplay"
-        android:gravity="center_horizontal"/>
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/album_name_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ghost stories"
-        android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/artist_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Coldplay" />
+
+        <TextView
+            android:id="@+id/album_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Ghost stories" />
+
+    </LinearLayout>
+
 
     <ImageView
         android:id="@+id/album_artwork_imageview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="60"
         android:gravity="center_horizontal"
-        android:src="@drawable/ghost_stories"/>
-
-    <TextView
-        android:id="@+id/track_name_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"/>
-
-    <ProgressBar
-        android:id="@+id/track_duration_progressbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_gravity="center_horizontal"/>
+        android:src="@drawable/ghost_stories"
+        android:layout_margin="10dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        android:layout_weight="15"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/track_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" />
+
+        <ProgressBar
+            android:id="@+id/track_duration_progressbar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="15"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
 
         <ImageButton
             android:id="@+id/previous_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@android:drawable/ic_media_previous"/>
+            android:src="@android:drawable/ic_media_previous" />
 
         <ImageButton
             android:id="@+id/play_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@android:drawable/ic_media_play"/>
+            android:src="@android:drawable/ic_media_play" />
 
         <ImageButton
             android:id="@+id/next_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@android:drawable/ic_media_next"/>
+            android:src="@android:drawable/ic_media_next" />
 
     </LinearLayout>
 
