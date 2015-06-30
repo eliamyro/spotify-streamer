@@ -1,21 +1,16 @@
 package com.eliasmyronidis.spotifystreamer;
 
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,8 +23,14 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
     private MediaPlayer mediaPlayer;
     int selectedTrack;
     ArrayList<CustomTrack> customTracksList;
+    TextView artistNameTextView;
+    private TextView albumNameTextView;
+    private ImageView albumeArtworkImageView;
+    private TextView trackNameTextView;
+    private String artistName;
+    boolean isPlaying = false;
+    private ImageButton playButton;
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -37,51 +38,44 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
 
         customTracksList = getActivity().getIntent().getParcelableArrayListExtra("tracks_list");
         selectedTrack = getActivity().getIntent().getIntExtra("selected_track", 0);
-        String artistName = getActivity().getIntent().getStringExtra("artist_name");
+        artistName = getActivity().getIntent().getStringExtra("artist_name");
 
-        String trackName = customTracksList.get(selectedTrack).getTrackName();
-
-        TextView artistNameTextView = (TextView)rootView.findViewById(R.id.artist_name_textview);
-        TextView albumNameTextView = (TextView)rootView.findViewById(R.id.album_name_textview);
-        ImageView albumeArtworkImageView = (ImageView)rootView.findViewById(R.id.album_artwork_imageview);
-        TextView trackNameTextView = (TextView)rootView.findViewById(R.id.track_name_textview);
-        ImageButton playButton = (ImageButton)rootView.findViewById(R.id.play_button);
+        artistNameTextView = (TextView) rootView.findViewById(R.id.artist_name_textview);
+        albumNameTextView = (TextView) rootView.findViewById(R.id.album_name_textview);
+        albumeArtworkImageView = (ImageView) rootView.findViewById(R.id.album_artwork_imageview);
+        trackNameTextView = (TextView) rootView.findViewById(R.id.track_name_textview);
+        playButton = (ImageButton) rootView.findViewById(R.id.play_button);
         playButton.setOnClickListener(this);
 
-        ImageButton stopButton = (ImageButton)rootView.findViewById(R.id.pause_button);
-        stopButton.setOnClickListener(this);
-
-        ImageButton nextButton = (ImageButton)rootView.findViewById(R.id.next_button);
+        ImageButton nextButton = (ImageButton) rootView.findViewById(R.id.next_button);
         nextButton.setOnClickListener(this);
 
-        ImageButton previousButton = (ImageButton)rootView.findViewById(R.id.previous_button);
+        ImageButton previousButton = (ImageButton) rootView.findViewById(R.id.previous_button);
         previousButton.setOnClickListener(this);
 
-        mediaPlayer = new MediaPlayer();
-        try {
-            mediaPlayer.setDataSource(customTracksList.get(selectedTrack).getPreviewUrl());
-            mediaPlayer.setOnPreparedListener(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setTrackInfo();
 
-        artistNameTextView.setText(artistName);
-        albumNameTextView.setText(customTracksList.get(selectedTrack).getAlbumName());
-        Picasso.with(getActivity()).load(customTracksList.get(selectedTrack).getLargeImageUrl()).into(albumeArtworkImageView);
-        trackNameTextView.setText(trackName.toString());
+        mediaPlayer = new MediaPlayer();
 
         return rootView;
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.play_button:
-                playTrack();
-                break;
+                if (isPlaying == false) {
+                    isPlaying = true;
+                    playButton.setImageResource(android.R.drawable.ic_media_pause);
+                } else {
+                    isPlaying = false;
+                    playButton.setImageResource(android.R.drawable.ic_media_play);
+                }
 
-            case R.id.pause_button:
-                pauseTrack();
+                if (isPlaying == true)
+                    playTrack();
+                else
+                    pauseTrack();
                 break;
 
             case R.id.next_button:
@@ -99,28 +93,40 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
         mediaPlayer.start();
     }
 
-    private void playTrack(){
-        try {
-            mediaPlayer.reset();
-            mediaPlayer.setDataSource(customTracksList.get(selectedTrack).getPreviewUrl());
-            mediaPlayer.prepareAsync();
-            mediaPlayer.setOnPreparedListener(this);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void playTrack() {
+        if (isPlaying == true) {
+            //playButton.setImageResource(android.R.drawable.ic_media_pause);
+            try {
+                mediaPlayer.reset();
+                mediaPlayer.setDataSource(customTracksList.get(selectedTrack).getPreviewUrl());
+                mediaPlayer.prepareAsync();
+                mediaPlayer.setOnPreparedListener(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void pauseTrack(){
+    private void pauseTrack() {
         mediaPlayer.pause();
     }
 
-    private void nextTrack(){
+    private void nextTrack() {
         selectedTrack++;
+        setTrackInfo();
         playTrack();
     }
 
-    private void previousTrack(){
+    private void previousTrack() {
         selectedTrack--;
+        setTrackInfo();
         playTrack();
+    }
+
+    private void setTrackInfo() {
+        artistNameTextView.setText(artistName);
+        albumNameTextView.setText(customTracksList.get(selectedTrack).getAlbumName());
+        Picasso.with(getActivity()).load(customTracksList.get(selectedTrack).getLargeImageUrl()).into(albumeArtworkImageView);
+        trackNameTextView.setText(customTracksList.get(selectedTrack).getTrackName());
     }
 }
