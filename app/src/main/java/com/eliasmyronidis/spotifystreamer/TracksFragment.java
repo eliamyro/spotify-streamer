@@ -64,6 +64,9 @@ public class TracksFragment extends Fragment {
                                                   @Override
                                                   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                       Intent mIntent = new Intent(getActivity(), MediaPlayerActivity.class);
+                                                      mIntent.putExtra("tracks_list", customTracksList);
+                                                      mIntent.putExtra("selected_track", position);
+                                                      mIntent.putExtra("artist_name", artistName);
                                                       startActivity(mIntent);
                                                   }
                                               }

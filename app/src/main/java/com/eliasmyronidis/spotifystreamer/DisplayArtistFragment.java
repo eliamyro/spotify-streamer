@@ -45,7 +45,7 @@ public class DisplayArtistFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_display_artist, container);
+        View rootView = inflater.inflate(R.layout.fragment_display_artist, container, false);
         ButterKnife.inject(this, rootView);
 
         artistsAdapter = new ArtistsAdapter(getActivity(), new ArrayList<CustomArtist>());
