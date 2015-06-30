@@ -95,7 +95,6 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
 
     private void playTrack() {
         if (isPlaying == true) {
-            //playButton.setImageResource(android.R.drawable.ic_media_pause);
             try {
                 mediaPlayer.reset();
                 mediaPlayer.setDataSource(customTracksList.get(selectedTrack).getPreviewUrl());
@@ -112,15 +111,19 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
     }
 
     private void nextTrack() {
-        selectedTrack++;
-        setTrackInfo();
-        playTrack();
+        if (selectedTrack < customTracksList.size() - 1) {
+            selectedTrack++;
+            setTrackInfo();
+            playTrack();
+        }
     }
 
     private void previousTrack() {
-        selectedTrack--;
-        setTrackInfo();
-        playTrack();
+        if (selectedTrack != 0) {
+            selectedTrack--;
+            setTrackInfo();
+            playTrack();
+        }
     }
 
     private void setTrackInfo() {
@@ -128,5 +131,11 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
         albumNameTextView.setText(customTracksList.get(selectedTrack).getAlbumName());
         Picasso.with(getActivity()).load(customTracksList.get(selectedTrack).getLargeImageUrl()).into(albumeArtworkImageView);
         trackNameTextView.setText(customTracksList.get(selectedTrack).getTrackName());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mediaPlayer.release();
     }
 }
