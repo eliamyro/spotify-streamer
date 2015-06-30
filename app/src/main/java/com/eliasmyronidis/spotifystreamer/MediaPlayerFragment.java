@@ -54,6 +54,9 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
         ImageButton nextButton = (ImageButton)rootView.findViewById(R.id.next_button);
         nextButton.setOnClickListener(this);
 
+        ImageButton previousButton = (ImageButton)rootView.findViewById(R.id.previous_button);
+        previousButton.setOnClickListener(this);
+
         mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(customTracksList.get(selectedTrack).getPreviewUrl());
@@ -84,6 +87,10 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
             case R.id.next_button:
                 nextTrack();
                 break;
+
+            case R.id.previous_button:
+                previousTrack();
+                break;
         }
     }
 
@@ -109,6 +116,11 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
 
     private void nextTrack(){
         selectedTrack++;
+        playTrack();
+    }
+
+    private void previousTrack(){
+        selectedTrack--;
         playTrack();
     }
 }
