@@ -2,23 +2,28 @@ package com.eliasmyronidis.spotifystreamer;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.util.ArrayList;
+
 
 /**
  * Created by Elias Myronidis on 27/6/2015.
  */
-public class MediaPlayerFragment extends Fragment implements View.OnClickListener, MediaPlayer.OnPreparedListener {
+public class MediaPlayerFragment extends Fragment implements View.OnClickListener, MediaPlayer.OnPreparedListener, SeekBar.OnSeekBarChangeListener {
 
     private MediaPlayer mediaPlayer;
     int selectedTrack;
@@ -30,6 +35,10 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
     private String artistName;
     boolean isPlaying = false;
     private ImageButton playButton;
+    private SeekBar seekbar;
+    public TextView startTimeTextView;
+    private TextView endTimeTextView;
+    private Handler mHandler = new Handler();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +55,11 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
         trackNameTextView = (TextView) rootView.findViewById(R.id.track_name_textview);
         playButton = (ImageButton) rootView.findViewById(R.id.play_button);
         playButton.setOnClickListener(this);
+        startTimeTextView = (TextView)rootView.findViewById(R.id.start_time_textview);
+        endTimeTextView = (TextView)rootView.findViewById(R.id.end_time_textview);
+
+        seekbar = (SeekBar)rootView.findViewById(R.id.track_duration_seekbar);
+        seekbar.setOnSeekBarChangeListener(this);
 
         ImageButton nextButton = (ImageButton) rootView.findViewById(R.id.next_button);
         nextButton.setOnClickListener(this);
@@ -91,6 +105,7 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
     @Override
     public void onPrepared(MediaPlayer mp) {
         mediaPlayer.start();
+        endTimeTextView.setText("0:"+Integer.toString(mp.getDuration()/1000));
     }
 
     private void playTrack() {
@@ -100,9 +115,15 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
                 mediaPlayer.setDataSource(customTracksList.get(selectedTrack).getPreviewUrl());
                 mediaPlayer.prepareAsync();
                 mediaPlayer.setOnPreparedListener(this);
+                seekbar.setProgress(0);
+                seekbar.setMax(30000);
+
+                updateSeekBar();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+
         }
     }
 
@@ -133,9 +154,68 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
         trackNameTextView.setText(customTracksList.get(selectedTrack).getTrackName());
     }
 
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        mediaPlayer.release();
+//    }
+
     @Override
-    public void onPause() {
-        super.onPause();
-        mediaPlayer.release();
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//        if(fromUser)
+//            mediaPlayer.seekTo(progress);
     }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        mHandler.removeCallbacks(updateTimeTask);
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        mHandler.removeCallbacks(updateTimeTask);
+       // int totalDuration = mp.getDuration();
+        int currentPosition = seekBar.getProgress();
+
+        // forward or backward to certain seconds
+        mediaPlayer.seekTo(currentPosition);
+
+        // update timer progress again
+        updateSeekBar();
+    }
+
+//    @Override
+//    public void run() {
+//        int currentPosition= 0;
+//        int total = 30000;
+//        while (mediaPlayer!=null && currentPosition<total) {
+//            try {
+//                Thread.sleep(1000);
+//                currentPosition= mediaPlayer.getCurrentPosition();
+//
+//            } catch (InterruptedException e) {
+//                return;
+//            } catch (Exception e) {
+//                return;
+//            }
+//            seekbar.setProgress(currentPosition);
+//
+//        }
+//    }
+
+    public void updateSeekBar(){
+        mHandler.postDelayed(updateTimeTask, 1000);
+    }
+
+    private Runnable updateTimeTask= new Runnable() {
+        @Override
+        public void run() {
+            int total = 30000;
+            int currentTime = mediaPlayer.getCurrentPosition();
+
+            startTimeTextView.setText("0:"+Integer.toString(currentTime/1000));
+            seekbar.setProgress(currentTime);
+            mHandler.postDelayed(this, 1000);
+        }
+    };
 }
