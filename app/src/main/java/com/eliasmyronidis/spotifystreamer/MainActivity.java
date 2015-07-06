@@ -10,10 +10,25 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity{
 
+    private boolean mTwoPane;
+    private static final String TRACKS_FRAGMENT_TAG = "TFTAG";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(findViewById(R.id.top_tracks_container)!=null){
+            mTwoPane = true;
+
+            if(savedInstanceState==null){
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.top_tracks_container, new TracksFragment(), TRACKS_FRAGMENT_TAG)
+                        .commit();
+            } else {
+                mTwoPane = false;
+            }
+        }
 
     }
 
