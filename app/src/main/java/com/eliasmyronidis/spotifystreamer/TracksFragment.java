@@ -35,8 +35,8 @@ public class TracksFragment extends Fragment {
 
     @InjectView(R.id.track_listview)
     ListView tracksListView;
-    private static final String SPOTIFY_ID = "spotify_id";
-    private static final String ARTIST_NAME = "artist_name";
+    public static final String SPOTIFY_ID = "spotify_id";
+    public static final String ARTIST_NAME = "artist_name";
 
     private ArrayAdapter<CustomTrack> tracksAdapter;
     private ArrayList<CustomTrack> customTracksList;
@@ -46,14 +46,23 @@ public class TracksFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+
+
         View rootView = inflater.inflate(R.layout.fragment_tracks, container, false);
         ButterKnife.inject(this, rootView);
 
-        Intent mIntent = getActivity().getIntent();
-        if (mIntent != null && mIntent.hasExtra(SPOTIFY_ID) && mIntent.hasExtra(ARTIST_NAME)) {
-            spotifiId = mIntent.getStringExtra(SPOTIFY_ID);
-            artistName = mIntent.getStringExtra(ARTIST_NAME);
+
+        Bundle arguments = getArguments();
+        if(arguments!=null){
+            spotifiId = arguments.getString(TracksFragment.SPOTIFY_ID);
+            artistName = arguments.getString(TracksFragment.ARTIST_NAME);
         }
+
+//        Intent mIntent = getActivity().getIntent();
+//        if (mIntent != null && mIntent.hasExtra(SPOTIFY_ID) && mIntent.hasExtra(ARTIST_NAME)) {
+//            spotifiId = mIntent.getStringExtra(SPOTIFY_ID);
+//            artistName = mIntent.getStringExtra(ARTIST_NAME);
+//        }
 
         // http://stackoverflow.com/questions/18320713/getsupportactionbar-from-inside-of-fragment-actionbarcompat
         ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(artistName);

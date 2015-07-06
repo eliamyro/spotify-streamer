@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements DisplayArtistFragment.ClickCallback{
 
     private boolean mTwoPane;
     private static final String TRACKS_FRAGMENT_TAG = "TFTAG";
@@ -25,9 +25,9 @@ public class MainActivity extends AppCompatActivity{
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.top_tracks_container, new TracksFragment(), TRACKS_FRAGMENT_TAG)
                         .commit();
-            } else {
-                mTwoPane = false;
             }
+        }else {
+            mTwoPane = false;
         }
 
     }
@@ -54,5 +54,25 @@ public class MainActivity extends AppCompatActivity{
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemSelected(String spotifyId, String artistName) {
+        if(mTwoPane==true){
+            Bundle args = new Bundle();
+            args.putString(TracksFragment.SPOTIFY_ID, spotifyId);
+            args.putString(TracksFragment.ARTIST_NAME, artistName);
+
+            TracksFragment fragment = new TracksFragment();
+            fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.top_tracks_container, fragment, TRACKS_FRAGMENT_TAG).commit();
+        } else {
+            Intent mIntent = new Intent(this, TracksActivity.class);
+            mIntent.putExtra(TracksFragment.SPOTIFY_ID, spotifyId);
+            mIntent.putExtra(TracksFragment.ARTIST_NAME, artistName);
+            startActivity(mIntent);
+        }
     }
 }

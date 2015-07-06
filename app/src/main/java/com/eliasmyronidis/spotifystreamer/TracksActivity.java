@@ -13,6 +13,19 @@ public class TracksActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracks);
+
+        if(savedInstanceState==null){
+
+            Bundle arguments = new Bundle();
+            arguments.putString(TracksFragment.SPOTIFY_ID, getIntent().getStringExtra(TracksFragment.SPOTIFY_ID));
+            arguments.putString(TracksFragment.ARTIST_NAME, getIntent().getStringExtra(TracksFragment.ARTIST_NAME));
+
+            TracksFragment fragment = new TracksFragment();
+            fragment.setArguments(arguments);
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.top_tracks_container, fragment).commit();
+        }
     }
 
     @Override

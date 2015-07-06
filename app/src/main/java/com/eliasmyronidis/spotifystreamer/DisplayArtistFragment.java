@@ -36,11 +36,12 @@ public class DisplayArtistFragment extends Fragment {
     @InjectView(R.id.artist_listview)
     ListView artistsListView;
 
-    private static final String SPOTIFY_ID = "spotify_id";
-    private static final String ARTIST_NAME = "artist_name";
-
     private ArrayAdapter<CustomArtist> artistsAdapter;
     private ArrayList<CustomArtist> customArtistsList;
+
+    public interface ClickCallback{
+        public void onItemSelected(String spotifyId, String artistName);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,10 +55,9 @@ public class DisplayArtistFragment extends Fragment {
                                                    @Override
                                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                        CustomArtist customArtist = artistsAdapter.getItem(position);
-                                                       Intent mIntent = new Intent(getActivity(), TracksActivity.class);
-                                                       mIntent.putExtra(SPOTIFY_ID, customArtist.getSpotifyId());
-                                                       mIntent.putExtra(ARTIST_NAME, customArtist.getArtistName());
-                                                       startActivity(mIntent);
+
+                                                       ((ClickCallback)getActivity()).onItemSelected(customArtist.getSpotifyId(), customArtist.getArtistName());
+
                                                    }
                                                }
         );
