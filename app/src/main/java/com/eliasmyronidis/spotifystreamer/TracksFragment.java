@@ -98,6 +98,7 @@ public class TracksFragment extends Fragment {
                     for (Track track : tracks.tracks) {
                         customTracksList.add(new CustomTrack(track));
                     }
+                    if(getActivity()!=null){
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -108,7 +109,7 @@ public class TracksFragment extends Fragment {
                                 showTopTracks(customTracksList);
                             }
                         }
-                    });
+                    });}
                 }
 
                 @Override

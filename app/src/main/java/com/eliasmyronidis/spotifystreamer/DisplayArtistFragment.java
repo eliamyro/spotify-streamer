@@ -1,6 +1,5 @@
 package com.eliasmyronidis.spotifystreamer;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
@@ -31,13 +30,15 @@ import retrofit.client.Response;
  * Created by Elias Myronidis on 7/6/2015.
  */
 public class DisplayArtistFragment extends Fragment {
+    private static final String SELECTED_KEY = "selected_key";
     @InjectView(R.id.search_edit_text)
     EditText searchEditText;
     @InjectView(R.id.artist_listview)
-    ListView artistsListView;
+    ListView mArtistsListView;
 
     private ArrayAdapter<CustomArtist> artistsAdapter;
     private ArrayList<CustomArtist> customArtistsList;
+    private int mPosition;
 
     public interface ClickCallback{
         public void onItemSelected(String spotifyId, String artistName);
@@ -50,14 +51,15 @@ public class DisplayArtistFragment extends Fragment {
         ButterKnife.inject(this, rootView);
 
         artistsAdapter = new ArtistsAdapter(getActivity(), new ArrayList<CustomArtist>());
-        artistsListView.setAdapter(artistsAdapter);
-        artistsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mArtistsListView.setAdapter(artistsAdapter);
+        mArtistsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                    @Override
                                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                        CustomArtist customArtist = artistsAdapter.getItem(position);
 
-                                                       ((ClickCallback)getActivity()).onItemSelected(customArtist.getSpotifyId(), customArtist.getArtistName());
+                                                       ((ClickCallback) getActivity()).onItemSelected(customArtist.getSpotifyId(), customArtist.getArtistName());
 
+                                                       mPosition = position;
                                                    }
                                                }
         );
@@ -105,6 +107,10 @@ public class DisplayArtistFragment extends Fragment {
                 return false;
             }
         });
+
+        if(savedInstanceState!=null && savedInstanceState.containsKey(SELECTED_KEY)){
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
         return rootView;
     }
 
@@ -128,6 +134,11 @@ public class DisplayArtistFragment extends Fragment {
         if (customArtistsList != null) {
             outState.putParcelableArrayList(getString(R.string.artist_list), customArtistsList);
         }
+
+        if(mPosition!=ListView.INVALID_POSITION){
+            outState.putInt(SELECTED_KEY, mPosition);
+        }
+
     }
 
     @Override
@@ -136,6 +147,11 @@ public class DisplayArtistFragment extends Fragment {
         if (savedInstanceState != null) {
             customArtistsList = savedInstanceState.getParcelableArrayList(getString(R.string.artist_list));
             showArtists(customArtistsList);
+
+            if(mPosition!=ListView.INVALID_POSITION)
+                mArtistsListView.smoothScrollToPosition(mPosition);
         }
+
+
     }
 }

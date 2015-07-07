@@ -4,14 +4,14 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:padding="10dp"
     android:minHeight="?android:attr/listPreferredItemHeight">
 
     <ImageView
         android:id="@+id/album_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="?android:attr/listPreferredItemHeight"
+        android:layout_height="?android:attr/listPreferredItemHeight"
         android:layout_marginRight="10dp"
-        android:gravity="center_vertical|left"
         android:src="@drawable/abc_switch_thumb_material"/>
 
 

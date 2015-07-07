@@ -44,7 +44,7 @@ public class TracksAdapter extends ArrayAdapter<CustomTrack> {
         String smallImage = getItem(position).getSmallImageUrl();
         String largeImage = getItem(position).getLargeImageUrl(); // large image for spotify stage 2
 
-        Picasso.with(getContext()).load(smallImage).resize(200, 200).into(holder.albumImage);
+        Picasso.with(getContext()).load(smallImage).resize(100, 100).into(holder.albumImage);
         return convertView;
     }
 

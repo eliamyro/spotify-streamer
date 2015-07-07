@@ -4,15 +4,16 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:padding="10dp"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:background="@drawable/touch_selector">
 
     <ImageView
         android:id="@+id/artist_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
-        android:gravity="center_vertical|left"/>
+        android:layout_width="?android:attr/listPreferredItemHeight"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:src="@drawable/ghost_stories"
+        android:layout_marginRight="10dp"/>
 
 
     <TextView
