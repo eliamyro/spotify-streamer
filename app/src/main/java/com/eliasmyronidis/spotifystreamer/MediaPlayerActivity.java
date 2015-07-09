@@ -1,11 +1,16 @@
 package com.eliasmyronidis.spotifystreamer;
 
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
 
 
 public class MediaPlayerActivity extends AppCompatActivity {
@@ -14,6 +19,17 @@ public class MediaPlayerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_player);
+
+        Bundle arguments = new Bundle();
+        arguments.putParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST, getIntent().getParcelableArrayListExtra(MediaPlayerFragment.CUSTOM_TRACKS_LIST));
+        arguments.putInt(MediaPlayerFragment.SELECTED_TRACK, getIntent().getIntExtra(MediaPlayerFragment.SELECTED_TRACK, 0));
+        arguments.putString(MediaPlayerFragment.ARTIST_NAME, getIntent().getStringExtra(MediaPlayerFragment.ARTIST_NAME));
+
+        DialogFragment mediaPlayerFragment = MediaPlayerFragment.newInstance();
+        mediaPlayerFragment.setArguments(arguments);
+//        mediaPlayerFragment.show(getSupportFragmentManager(),"dialog");
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.media_player_container, mediaPlayerFragment).commit();
     }
 
     @Override

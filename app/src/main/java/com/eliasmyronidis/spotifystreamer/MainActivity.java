@@ -10,7 +10,7 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity implements DisplayArtistFragment.ClickCallback{
 
-    private boolean mTwoPane;
+    public static boolean mTwoPane;
     private static final String TRACKS_FRAGMENT_TAG = "TFTAG";
 
     @Override

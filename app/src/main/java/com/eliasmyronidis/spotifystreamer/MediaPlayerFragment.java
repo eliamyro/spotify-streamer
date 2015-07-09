@@ -3,7 +3,9 @@ package com.eliasmyronidis.spotifystreamer;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Created by Elias Myronidis on 27/6/2015.
  */
-public class MediaPlayerFragment extends Fragment implements View.OnClickListener, MediaPlayer.OnPreparedListener, SeekBar.OnSeekBarChangeListener {
+public class MediaPlayerFragment extends DialogFragment implements View.OnClickListener, MediaPlayer.OnPreparedListener, SeekBar.OnSeekBarChangeListener {
 
     private MediaPlayer mediaPlayer;
     int selectedTrack;
@@ -40,14 +42,30 @@ public class MediaPlayerFragment extends Fragment implements View.OnClickListene
     private TextView endTimeTextView;
     private Handler mHandler = new Handler();
 
+    public static final String CUSTOM_TRACKS_LIST = "custom_tracks_list";
+    public static final String SELECTED_TRACK = "selected_track";
+    public static final String ARTIST_NAME = "artist_name";
+
+    static MediaPlayerFragment newInstance() {
+        return new MediaPlayerFragment();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
 
-        customTracksList = getActivity().getIntent().getParcelableArrayListExtra("tracks_list");
-        selectedTrack = getActivity().getIntent().getIntExtra("selected_track", 0);
-        artistName = getActivity().getIntent().getStringExtra("artist_name");
+
+        Bundle arguments = getArguments();
+        if(arguments!=null){
+            customTracksList = arguments.getParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST);
+            selectedTrack = arguments.getInt(MediaPlayerFragment.SELECTED_TRACK);
+            artistName = arguments.getString(MediaPlayerFragment.ARTIST_NAME);
+        }
+
+//        customTracksList = getActivity().getIntent().getParcelableArrayListExtra(CUSTOM_TRACKS_LIST);
+//        selectedTrack = getActivity().getIntent().getIntExtra(SELECTED_TRACK, 0);
+//        artistName = getActivity().getIntent().getStringExtra(ARTIST_NAME);
 
         artistNameTextView = (TextView) rootView.findViewById(R.id.artist_name_textview);
         albumNameTextView = (TextView) rootView.findViewById(R.id.album_name_textview);

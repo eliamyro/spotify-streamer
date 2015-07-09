@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -43,9 +44,10 @@ public class TracksFragment extends Fragment {
     private String spotifiId;
     private String artistName;
 
+    private static final String MEDIA_PLAYER_FRAGMENT_TAG = "MPFTAG";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
 
 
         View rootView = inflater.inflate(R.layout.fragment_tracks, container, false);
@@ -53,7 +55,7 @@ public class TracksFragment extends Fragment {
 
 
         Bundle arguments = getArguments();
-        if(arguments!=null){
+        if (arguments != null) {
             spotifiId = arguments.getString(TracksFragment.SPOTIFY_ID);
             artistName = arguments.getString(TracksFragment.ARTIST_NAME);
         }
@@ -72,13 +74,26 @@ public class TracksFragment extends Fragment {
         tracksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                   @Override
                                                   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                      Intent mIntent = new Intent(getActivity(), MediaPlayerActivity.class);
-                                                      mIntent.putExtra("tracks_list", customTracksList);
-                                                      mIntent.putExtra("selected_track", position);
-                                                      mIntent.putExtra("artist_name", artistName);
-                                                      startActivity(mIntent);
+                                                      if (MainActivity.mTwoPane == false) {
+                                                          Intent mIntent = new Intent(getActivity(), MediaPlayerActivity.class);
+                                                          mIntent.putExtra(MediaPlayerFragment.CUSTOM_TRACKS_LIST, customTracksList);
+                                                          mIntent.putExtra(MediaPlayerFragment.SELECTED_TRACK, position);
+                                                          mIntent.putExtra(MediaPlayerFragment.ARTIST_NAME, artistName);
+                                                          startActivity(mIntent);
+                                                      } else {
+
+                                                          Bundle arguments = new Bundle();
+                                                          arguments.putParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST, customTracksList);
+                                                          arguments.putInt(MediaPlayerFragment.SELECTED_TRACK, position);
+                                                          arguments.putString(MediaPlayerFragment.ARTIST_NAME, artistName);
+
+                                                          DialogFragment mediaPlayerFragment = MediaPlayerFragment.newInstance();
+                                                          mediaPlayerFragment.setArguments(arguments);
+                                                          mediaPlayerFragment.show(getActivity().getSupportFragmentManager(), MEDIA_PLAYER_FRAGMENT_TAG);
+                                                      }
                                                   }
                                               }
+
         );
 
         if (savedInstanceState == null) {
@@ -98,18 +113,19 @@ public class TracksFragment extends Fragment {
                     for (Track track : tracks.tracks) {
                         customTracksList.add(new CustomTrack(track));
                     }
-                    if(getActivity()!=null){
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
-                            if (customTracksList.isEmpty()) {
-                                setToastMessage(getString(R.string.no_tracks_toast));
-                            } else {
-                                showTopTracks(customTracksList);
+                                if (customTracksList.isEmpty()) {
+                                    setToastMessage(getString(R.string.no_tracks_toast));
+                                } else {
+                                    showTopTracks(customTracksList);
+                                }
                             }
-                        }
-                    });}
+                        });
+                    }
                 }
 
                 @Override
@@ -136,7 +152,7 @@ public class TracksFragment extends Fragment {
     }
 
     public void setToastMessage(String toastMessage) {
-        if(getActivity()!=null)
+        if (getActivity() != null)
             Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
     }
 
