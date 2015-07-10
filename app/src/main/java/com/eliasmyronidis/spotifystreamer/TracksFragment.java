@@ -82,13 +82,13 @@ public class TracksFragment extends Fragment {
                                                           startActivity(mIntent);
                                                       } else {
 
-                                                          Bundle arguments = new Bundle();
-                                                          arguments.putParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST, customTracksList);
-                                                          arguments.putInt(MediaPlayerFragment.SELECTED_TRACK, position);
-                                                          arguments.putString(MediaPlayerFragment.ARTIST_NAME, artistName);
+//                                                          Bundle arguments = new Bundle();
+//                                                          arguments.putParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST, customTracksList);
+//                                                          arguments.putInt(MediaPlayerFragment.SELECTED_TRACK, position);
+//                                                          arguments.putString(MediaPlayerFragment.ARTIST_NAME, artistName);
 
-                                                          DialogFragment mediaPlayerFragment = MediaPlayerFragment.newInstance();
-                                                          mediaPlayerFragment.setArguments(arguments);
+                                                          DialogFragment mediaPlayerFragment = MediaPlayerFragment.newInstance(customTracksList, position, artistName);
+//                                                          mediaPlayerFragment.setArguments(arguments);
                                                           mediaPlayerFragment.show(getActivity().getSupportFragmentManager(), MEDIA_PLAYER_FRAGMENT_TAG);
                                                       }
                                                   }

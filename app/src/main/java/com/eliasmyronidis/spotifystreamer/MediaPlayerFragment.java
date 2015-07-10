@@ -1,5 +1,6 @@
 package com.eliasmyronidis.spotifystreamer;
 
+import android.app.Dialog;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -46,18 +48,24 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     public static final String SELECTED_TRACK = "selected_track";
     public static final String ARTIST_NAME = "artist_name";
 
-    static MediaPlayerFragment newInstance() {
-        return new MediaPlayerFragment();
+    static MediaPlayerFragment newInstance(ArrayList<CustomTrack> trackList, int track, String name) {
+        MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
+        Bundle arguments = new Bundle();
+        arguments.putParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST, trackList);
+        arguments.putInt(MediaPlayerFragment.SELECTED_TRACK, track);
+        arguments.putString(MediaPlayerFragment.ARTIST_NAME, name);
+        mediaPlayerFragment.setArguments(arguments);
+        return mediaPlayerFragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
-
+//        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         Bundle arguments = getArguments();
-        if(arguments!=null){
+        if (arguments != null) {
             customTracksList = arguments.getParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST);
             selectedTrack = arguments.getInt(MediaPlayerFragment.SELECTED_TRACK);
             artistName = arguments.getString(MediaPlayerFragment.ARTIST_NAME);
@@ -73,10 +81,10 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         trackNameTextView = (TextView) rootView.findViewById(R.id.track_name_textview);
         playButton = (ImageButton) rootView.findViewById(R.id.play_button);
         playButton.setOnClickListener(this);
-        startTimeTextView = (TextView)rootView.findViewById(R.id.start_time_textview);
-        endTimeTextView = (TextView)rootView.findViewById(R.id.end_time_textview);
+        startTimeTextView = (TextView) rootView.findViewById(R.id.start_time_textview);
+        endTimeTextView = (TextView) rootView.findViewById(R.id.end_time_textview);
 
-        seekbar = (SeekBar)rootView.findViewById(R.id.track_duration_seekbar);
+        seekbar = (SeekBar) rootView.findViewById(R.id.track_duration_seekbar);
         seekbar.setOnSeekBarChangeListener(this);
 
         ImageButton nextButton = (ImageButton) rootView.findViewById(R.id.next_button);
@@ -90,6 +98,15 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         mediaPlayer = new MediaPlayer();
 
         return rootView;
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+
+        // request a window without the title
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
     }
 
     @Override
@@ -123,7 +140,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     @Override
     public void onPrepared(MediaPlayer mp) {
         mediaPlayer.start();
-        endTimeTextView.setText("0:"+Integer.toString(mp.getDuration()/1000));
+        endTimeTextView.setText("0:" + Integer.toString(mp.getDuration() / 1000));
     }
 
     private void playTrack() {
@@ -192,7 +209,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         mHandler.removeCallbacks(updateTimeTask);
-       // int totalDuration = mp.getDuration();
+        // int totalDuration = mp.getDuration();
         int currentPosition = seekBar.getProgress();
 
         // forward or backward to certain seconds
@@ -221,17 +238,17 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 //        }
 //    }
 
-    public void updateSeekBar(){
+    public void updateSeekBar() {
         mHandler.postDelayed(updateTimeTask, 1000);
     }
 
-    private Runnable updateTimeTask= new Runnable() {
+    private Runnable updateTimeTask = new Runnable() {
         @Override
         public void run() {
             int total = 30000;
             int currentTime = mediaPlayer.getCurrentPosition();
 
-            startTimeTextView.setText("0:"+Integer.toString(currentTime/1000));
+            startTimeTextView.setText("0:" + Integer.toString(currentTime / 1000));
             seekbar.setProgress(currentTime);
             mHandler.postDelayed(this, 1000);
         }
