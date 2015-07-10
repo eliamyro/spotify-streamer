@@ -1,4 +1,4 @@
-package com.eliasmyronidis.spotifystreamer;
+package com.eliasmyronidis.spotifystreamer.activities;
 
 
 import android.content.Intent;
@@ -9,6 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.eliasmyronidis.spotifystreamer.fragments.MediaPlayerFragment;
+import com.eliasmyronidis.spotifystreamer.R;
+import com.eliasmyronidis.spotifystreamer.beans.CustomTrack;
 
 import java.util.ArrayList;
 

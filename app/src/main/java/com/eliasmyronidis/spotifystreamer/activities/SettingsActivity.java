@@ -1,4 +1,4 @@
-package com.eliasmyronidis.spotifystreamer;
+package com.eliasmyronidis.spotifystreamer.activities;
 
 /**
  * Created by Elias Myronidis on 20/6/2015.
@@ -9,6 +9,8 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+
+import com.eliasmyronidis.spotifystreamer.R;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

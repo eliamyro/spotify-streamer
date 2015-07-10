@@ -9,7 +9,7 @@
 
     <fragment
         android:id="@+id/display_artist_fragment"
-        android:name="com.eliasmyronidis.spotifystreamer.DisplayArtistFragment"
+        android:name="com.eliasmyronidis.spotifystreamer.fragments.DisplayArtistFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"

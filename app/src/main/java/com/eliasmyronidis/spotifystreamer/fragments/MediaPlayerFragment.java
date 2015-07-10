@@ -1,12 +1,10 @@
-package com.eliasmyronidis.spotifystreamer;
+package com.eliasmyronidis.spotifystreamer.fragments;
 
 import android.app.Dialog;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +14,9 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.eliasmyronidis.spotifystreamer.R;
+import com.eliasmyronidis.spotifystreamer.beans.CustomTrack;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +46,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     public static final String SELECTED_TRACK = "selected_track";
     public static final String ARTIST_NAME = "artist_name";
 
-    static MediaPlayerFragment newInstance(ArrayList<CustomTrack> trackList, int track, String name) {
+    public static MediaPlayerFragment newInstance(ArrayList<CustomTrack> trackList, int track, String name) {
         MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
         Bundle arguments = new Bundle();
         arguments.putParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST, trackList);

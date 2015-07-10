@@ -4,5 +4,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
-    android:name="com.eliasmyronidis.spotifystreamer.DisplayArtistFragment"
+    android:name="com.eliasmyronidis.spotifystreamer.fragments.DisplayArtistFragment"
     tools:layout="@layout/fragment_display_artist" />
