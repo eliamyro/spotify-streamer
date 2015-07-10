@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="fragment_media_player" type="layout">@layout/dialog_media_player</item>
+</resources>
