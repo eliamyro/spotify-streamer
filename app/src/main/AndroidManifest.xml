@@ -43,6 +43,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.TracksActivity" />
         </activity>
+
+        <service android:name="com.eliasmyronidis.spotifystreamer.MediaPlayerService" />
     </application>
 
 </manifest>

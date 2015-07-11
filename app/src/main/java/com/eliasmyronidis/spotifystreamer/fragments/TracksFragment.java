@@ -1,5 +1,7 @@
 package com.eliasmyronidis.spotifystreamer.fragments;
 
+
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,20 +85,14 @@ public class TracksFragment extends Fragment {
                                                   @Override
                                                   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                       if (MainActivity.mTwoPane == false) {
-                                                          Intent mIntent = new Intent(getActivity(), MediaPlayerActivity.class);
-                                                          mIntent.putExtra(MediaPlayerFragment.CUSTOM_TRACKS_LIST, customTracksList);
-                                                          mIntent.putExtra(MediaPlayerFragment.SELECTED_TRACK, position);
-                                                          mIntent.putExtra(MediaPlayerFragment.ARTIST_NAME, artistName);
-                                                          startActivity(mIntent);
+                                                          FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                                          MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment().newInstance(customTracksList, position, artistName);
+                                                          android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+                                                          transaction.setTransition(android.support.v4.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                                          transaction.replace(android.R.id.content, mediaPlayerFragment)
+                                                                  .addToBackStack(null).commit();
                                                       } else {
-
-//                                                          Bundle arguments = new Bundle();
-//                                                          arguments.putParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST, customTracksList);
-//                                                          arguments.putInt(MediaPlayerFragment.SELECTED_TRACK, position);
-//                                                          arguments.putString(MediaPlayerFragment.ARTIST_NAME, artistName);
-
                                                           DialogFragment mediaPlayerFragment = MediaPlayerFragment.newInstance(customTracksList, position, artistName);
-//                                                          mediaPlayerFragment.setArguments(arguments);
                                                           mediaPlayerFragment.show(getActivity().getSupportFragmentManager(), MEDIA_PLAYER_FRAGMENT_TAG);
                                                       }
                                                   }

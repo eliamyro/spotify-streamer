@@ -24,22 +24,6 @@ public class MediaPlayerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_player);
 
-        if (getIntent() != null) {
-            ArrayList<CustomTrack> customTrackList = getIntent().getParcelableArrayListExtra(MediaPlayerFragment.CUSTOM_TRACKS_LIST);
-            int selectedTrack = getIntent().getIntExtra(MediaPlayerFragment.SELECTED_TRACK, 0);
-            String artistName = getIntent().getStringExtra(MediaPlayerFragment.ARTIST_NAME);
-
-//        Bundle arguments = new Bundle();
-//        arguments.putParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST, getIntent().getParcelableArrayListExtra(MediaPlayerFragment.CUSTOM_TRACKS_LIST));
-//        arguments.putInt(MediaPlayerFragment.SELECTED_TRACK, getIntent().getIntExtra(MediaPlayerFragment.SELECTED_TRACK, 0));
-//        arguments.putString(MediaPlayerFragment.ARTIST_NAME, getIntent().getStringExtra(MediaPlayerFragment.ARTIST_NAME));
-
-            DialogFragment mediaPlayerFragment = MediaPlayerFragment.newInstance(customTrackList, selectedTrack, artistName);
-//        mediaPlayerFragment.setArguments(arguments);
-//        mediaPlayerFragment.show(getSupportFragmentManager(),"dialog");
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.media_player_container, mediaPlayerFragment).commit();
-        }
     }
 
     @Override
