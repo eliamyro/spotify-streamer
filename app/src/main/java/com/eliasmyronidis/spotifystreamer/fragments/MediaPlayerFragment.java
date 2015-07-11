@@ -32,9 +32,9 @@ import com.eliasmyronidis.spotifystreamer.MediaPlayerService.MediaPlayerBinder;
 /**
  * Created by Elias Myronidis on 27/6/2015.
  */
-public class MediaPlayerFragment extends DialogFragment implements View.OnClickListener{
+public class MediaPlayerFragment extends DialogFragment implements View.OnClickListener {
 
-  //  implements View.OnClickListener, MediaPlayer.OnPreparedListener, SeekBar.OnSeekBarChangeListener
+    //  implements View.OnClickListener, MediaPlayer.OnPreparedListener, SeekBar.OnSeekBarChangeListener
 
     private MediaPlayer mediaPlayer;
     int selectedTrack;
@@ -59,6 +59,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     private MediaPlayerService mediaPlayerService;
     private Intent intentService;
     private boolean musicBound = false;
+    View rootView;
 
     public static MediaPlayerFragment newInstance(ArrayList<CustomTrack> trackList, int track, String name) {
         MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
@@ -83,19 +84,31 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 //    }
 
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    // connect to the service
+    private ServiceConnection musicConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MediaPlayerBinder binder = (MediaPlayerBinder) service;
+            mediaPlayerService = binder.getService();
+            mediaPlayerService.setMediaPlayerViews(getView());
+            mediaPlayerService.startMediaPlayer(customTracksList.get(selectedTrack).getPreviewUrl());
 
-    }
+            musicBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicBound = false;
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
+        rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
 //        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        if(intentService == null){
+        if (intentService == null) {
             intentService = new Intent(getActivity().getBaseContext(), MediaPlayerService.class);
             getActivity().getBaseContext().startService(intentService);
             getActivity().getBaseContext().bindService(intentService, musicConnection, Context.BIND_AUTO_CREATE);
@@ -108,10 +121,6 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
             selectedTrack = arguments.getInt(MediaPlayerFragment.SELECTED_TRACK);
             artistName = arguments.getString(MediaPlayerFragment.ARTIST_NAME);
         }
-
-//        customTracksList = getActivity().getIntent().getParcelableArrayListExtra(CUSTOM_TRACKS_LIST);
-//        selectedTrack = getActivity().getIntent().getIntExtra(SELECTED_TRACK, 0);
-//        artistName = getActivity().getIntent().getStringExtra(ARTIST_NAME);
 
 
         artistNameTextView = (TextView) rootView.findViewById(R.id.artist_name_textview);
@@ -132,9 +141,9 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         ImageButton previousButton = (ImageButton) rootView.findViewById(R.id.previous_button);
         previousButton.setOnClickListener(this);
 
-       // setTrackInfo();
+        // setTrackInfo();
 
-     //   mediaPlayer = new MediaPlayer();
+        //   mediaPlayer = new MediaPlayer();
 
         return rootView;
     }
@@ -148,60 +157,40 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         return dialog;
     }
 
-    // connect to the service
-    private ServiceConnection musicConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MediaPlayerBinder binder = (MediaPlayerBinder) service;
-            //get service
-            mediaPlayerService = binder.getService();
 
-            //pass list
-            mediaPlayerService.setSong(customTracksList.get(selectedTrack).getPreviewUrl());
-            mediaPlayerService.playSong();
-            musicBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            musicBound = false;
-        }
-    };
-
-    //user song select
-    public void songPicked(View view){
-       // mediaPlayerService.setSong(Integer.parseInt(view.getTag().toString()));
-       mediaPlayerService.playSong();
-    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.play_button:
-                if (isPlaying == false) {
-                    isPlaying = true;
-                    playButton.setImageResource(android.R.drawable.ic_media_pause);
-                } else {
-                    isPlaying = false;
-                    playButton.setImageResource(android.R.drawable.ic_media_play);
-                }
-
-               // if (isPlaying == true)
-                   // playTrack();
-             //   else
-                  //  pauseTrack();
+            //    playPause();
                 break;
 
             case R.id.next_button:
-                //nextTrack();
+//                nextTrack();
                 break;
 
             case R.id.previous_button:
-             //   previousTrack();
+//                previousTrack();
                 break;
         }
     }
 
+//    public void nextTrack() {
+//        selectedTrack++;
+//        mediaPlayerService.setSong(customTracksList.get(selectedTrack).getPreviewUrl());
+//        mediaPlayerService.playSong();
+//    }
+
+//    public void previousTrack() {
+//        selectedTrack--;
+//        mediaPlayerService.setSong(customTracksList.get(selectedTrack).getPreviewUrl());
+//        mediaPlayerService.playSong();
+//    }
+
+    //public void playPause(){
+      //  mediaPlayerService.playPauseSong();
+//    }
 
 
 //        albumNameTextView.setText(customTracksList.get(selectedTrack).getAlbumName());
@@ -273,4 +262,14 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 //            mHandler.postDelayed(this, 1000);
 //        }
 //    };
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Unbind from the service
+        if (musicBound) {
+            getActivity().getBaseContext().unbindService(musicConnection);
+            musicBound = false;
+        }
+    }
 }
