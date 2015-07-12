@@ -32,7 +32,7 @@ import com.eliasmyronidis.spotifystreamer.MediaPlayerService.MediaPlayerBinder;
 /**
  * Created by Elias Myronidis on 27/6/2015.
  */
-public class MediaPlayerFragment extends DialogFragment implements View.OnClickListener {
+public class MediaPlayerFragment extends DialogFragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     int selectedTrack;
     ArrayList<CustomTrack> customTracksList;
@@ -145,7 +145,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         endTimeTextView = (TextView) rootView.findViewById(R.id.end_time_textview);
 
         seekbar = (SeekBar) rootView.findViewById(R.id.track_duration_seekbar);
-//        seekbar.setOnSeekBarChangeListener(this);
+        seekbar.setOnSeekBarChangeListener(this);
 
         nextButton = (ImageButton) rootView.findViewById(R.id.next_button);
         nextButton.setOnClickListener(this);
@@ -320,5 +320,22 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
             getActivity().getBaseContext().unbindService(musicConnection);
             musicBound = false;
         }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//        if(fromUser)
+//            mediaPlayer.seekTo(progress);
+    }
+
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }

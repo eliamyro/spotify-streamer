@@ -5,14 +5,17 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.io.IOException;
 
 /**
- * Created by eliamyro on 10/7/15.
+ * Created by Elias Myronidis on 10/7/15.
  */
 public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
 
@@ -21,6 +24,22 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private ImageButton playPauseButton;
     private String mTrackUrl;
     private boolean nextPressed;
+    private SeekBar seekbar;
+    private TextView startTimeTextView;
+    private TextView endTimeTextView;
+    private int trackDuration;
+    private Handler mHandler = new Handler();
+
+
+    private Runnable updateProgress = new Runnable() {
+        @Override
+        public void run() {
+            int currentPosition = mediaPlayer.getCurrentPosition();
+            seekbar.setProgress(currentPosition);
+            startTimeTextView.setText(Utility.getTimeFormated(currentPosition));
+            mHandler.postDelayed(this,1000);
+        }
+    };
 
 
     @Override
@@ -96,7 +115,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     @Override
     public void onPrepared(MediaPlayer mp) {
         playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
+
+        trackDuration = mediaPlayer.getDuration();
+        seekbar.setMax(trackDuration);
+
+        endTimeTextView.setText(Utility.getTimeFormated(trackDuration));
         mediaPlayer.start();
+        mHandler.postDelayed(updateProgress, 1000);
     }
 
     @Override
@@ -118,6 +143,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
      */
     public void setMediaPlayerViews(View mediaPlayerView) {
         playPauseButton = (ImageButton) mediaPlayerView.findViewById(R.id.play_button);
+        seekbar = (SeekBar)mediaPlayerView.findViewById(R.id.track_duration_seekbar);
+
+        startTimeTextView = (TextView)mediaPlayerView.findViewById(R.id.start_time_textview);
+        endTimeTextView = (TextView)mediaPlayerView.findViewById(R.id.end_time_textview);
+        endTimeTextView.setText(Utility.getTimeFormated(trackDuration));
+
     }
 
     @Override
