@@ -34,9 +34,6 @@ import com.eliasmyronidis.spotifystreamer.MediaPlayerService.MediaPlayerBinder;
  */
 public class MediaPlayerFragment extends DialogFragment implements View.OnClickListener {
 
-    //  implements View.OnClickListener, MediaPlayer.OnPreparedListener, SeekBar.OnSeekBarChangeListener
-
-    private MediaPlayer mediaPlayer;
     int selectedTrack;
     ArrayList<CustomTrack> customTracksList;
     TextView artistNameTextView;
@@ -44,22 +41,22 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     private ImageView albumeArtworkImageView;
     private TextView trackNameTextView;
     private String artistName;
-    boolean isPlaying = false;
-    private ImageButton playButton;
-    private SeekBar seekbar;
+
     public TextView startTimeTextView;
-    private TextView endTimeTextView;
-    private Handler mHandler = new Handler();
 
     public static final String CUSTOM_TRACKS_LIST = "custom_tracks_list";
     public static final String SELECTED_TRACK = "selected_track";
     public static final String ARTIST_NAME = "artist_name";
 
-
     private MediaPlayerService mediaPlayerService;
     private Intent intentService;
     private boolean musicBound = false;
     View rootView;
+    private ImageButton playButton;
+    private ImageButton nextButton;
+    private ImageButton previousButton;
+    private TextView endTimeTextView;
+    private SeekBar seekbar;
 
     public static MediaPlayerFragment newInstance(ArrayList<CustomTrack> trackList, int track, String name) {
         MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
@@ -92,7 +89,6 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
             mediaPlayerService = binder.getService();
             mediaPlayerService.setMediaPlayerViews(getView());
             mediaPlayerService.startMediaPlayer(customTracksList.get(selectedTrack).getPreviewUrl());
-
             musicBound = true;
         }
 
@@ -101,6 +97,22 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
             musicBound = false;
         }
     };
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SELECTED_TRACK, selectedTrack);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            selectedTrack = savedInstanceState.getInt(SELECTED_TRACK);
+            setTrackInfo();
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -135,17 +147,38 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         seekbar = (SeekBar) rootView.findViewById(R.id.track_duration_seekbar);
 //        seekbar.setOnSeekBarChangeListener(this);
 
-        ImageButton nextButton = (ImageButton) rootView.findViewById(R.id.next_button);
+        nextButton = (ImageButton) rootView.findViewById(R.id.next_button);
         nextButton.setOnClickListener(this);
 
-        ImageButton previousButton = (ImageButton) rootView.findViewById(R.id.previous_button);
+        previousButton = (ImageButton) rootView.findViewById(R.id.previous_button);
         previousButton.setOnClickListener(this);
 
-        // setTrackInfo();
-
-        //   mediaPlayer = new MediaPlayer();
+        setTrackInfo();
 
         return rootView;
+    }
+
+
+    public void setTrackInfo() {
+
+        // Disables the previous button if it's the first track.
+        if(selectedTrack==0){
+            previousButton.setEnabled(false);
+        } else if(selectedTrack==1){
+            previousButton.setEnabled(true);
+        }
+
+        // Disables the next button if it's the last track.
+        if(selectedTrack==customTracksList.size()-1)
+            nextButton.setEnabled(false);
+        else if(selectedTrack==customTracksList.size()-2)
+            nextButton.setEnabled(true);
+
+        // set's track info.
+        Picasso.with(getActivity().getBaseContext()).load(customTracksList.get(selectedTrack).getLargeImageUrl()).into(albumeArtworkImageView);
+        artistNameTextView.setText(artistName);
+        albumNameTextView.setText(customTracksList.get(selectedTrack).getAlbumName());
+        trackNameTextView.setText(customTracksList.get(selectedTrack).getTrackName());
     }
 
     @Override
@@ -158,20 +191,29 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     }
 
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.play_button:
-            //    playPause();
+                mediaPlayerService.playPauseTrack();
                 break;
 
             case R.id.next_button:
-//                nextTrack();
+
+                if (selectedTrack != customTracksList.size() - 1) {
+                    selectedTrack++;
+                    mediaPlayerService.nextTrack(customTracksList.get(selectedTrack).getPreviewUrl());
+                    setTrackInfo();
+                }
                 break;
 
             case R.id.previous_button:
-//                previousTrack();
+
+                if (selectedTrack != 0) {
+                    selectedTrack--;
+                    mediaPlayerService.previousTrack(customTracksList.get(selectedTrack).getPreviewUrl());
+                    setTrackInfo();
+                }
                 break;
         }
     }
@@ -189,7 +231,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 //    }
 
     //public void playPause(){
-      //  mediaPlayerService.playPauseSong();
+    //  mediaPlayerService.playPauseSong();
 //    }
 
 
@@ -263,9 +305,16 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 //        }
 //    };
 
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//
+//
+//    }
+
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
         // Unbind from the service
         if (musicBound) {
             getActivity().getBaseContext().unbindService(musicConnection);

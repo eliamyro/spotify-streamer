@@ -17,47 +17,51 @@ import java.io.IOException;
 public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
 
     private MediaPlayer mediaPlayer;
-    private String songUrl;
     private final IBinder musicBind = new MediaPlayerBinder();
-    private ImageButton playStopButton;
+    private ImageButton playPauseButton;
     private String mTrackUrl;
+    private boolean nextPressed;
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-            return START_STICKY;
+        return START_STICKY;
     }
 
     /**
      * If the track is not the same with the track playing then we set the media player.
      * On screen orientation the track doesn't stop!
+     *
      * @param trackUrl the track's url.
      */
-    public void startMediaPlayer(String trackUrl){
-        if(!setTrackUrl(trackUrl))
+    public void startMediaPlayer(String trackUrl) {
+        if (!setTrackUrl(trackUrl)) {
             setMediaPlayer();
+        }
     }
 
 
     /**
      * Checks if the track playing is the same or if there is no track.
+     *
      * @param trackUrl the track's url.
      * @return false if it's not the same or true if it's the same.
      */
-    public boolean setTrackUrl(String trackUrl){
-        if(mTrackUrl == null || !mTrackUrl.equals(trackUrl)) {
+    public boolean setTrackUrl(String trackUrl) {
+        if (mTrackUrl == null || !mTrackUrl.equals(trackUrl)) {
             mTrackUrl = trackUrl;
             return false;
         } else {
-        return true;}
+            return true;
+        }
     }
 
 
     /**
      * Sets the mediaplayer.
      */
-    public void setMediaPlayer(){
-        if(mediaPlayer != null){
+    public void setMediaPlayer() {
+        if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
@@ -69,7 +73,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-        try{
+        try {
             mediaPlayer.setDataSource(mTrackUrl);
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
@@ -81,7 +85,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     /**
      * Sets the mediaPlayer listeners.
      */
-    public void setListeners(){
+    public void setListeners() {
 
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnCompletionListener(this);
@@ -91,12 +95,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onPrepared(MediaPlayer mp) {
+        playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
         mediaPlayer.start();
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-
+        mediaPlayer.seekTo(0);
+        playPauseButton.setImageResource(android.R.drawable.ic_media_play);
     }
 
     @Override
@@ -107,10 +113,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     /**
      * Sets the views of the media player.
+     *
      * @param mediaPlayerView the views of the media player.
      */
-    public void setMediaPlayerViews(View mediaPlayerView){
-        playStopButton = (ImageButton)mediaPlayerView.findViewById(R.id.play_button);
+    public void setMediaPlayerViews(View mediaPlayerView) {
+        playPauseButton = (ImageButton) mediaPlayerView.findViewById(R.id.play_button);
     }
 
     @Override
@@ -119,10 +126,30 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     public class MediaPlayerBinder extends Binder {
-        public MediaPlayerService getService(){
+        public MediaPlayerService getService() {
             return MediaPlayerService.this;
         }
     }
 
+    public void playPauseTrack() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            playPauseButton.setImageResource(android.R.drawable.ic_media_play);
+        } else if (!mediaPlayer.isPlaying() && nextPressed != true) {
+            mediaPlayer.start();
+            playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
+        } else {
+            nextPressed = false;
+            startMediaPlayer(mTrackUrl);
+        }
+    }
+
+    public void nextTrack(String trackUrl) {
+        startMediaPlayer(trackUrl);
+    }
+
+    public void previousTrack(String trackUrl){
+        startMediaPlayer(trackUrl);
+    }
 
 }
