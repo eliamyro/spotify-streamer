@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,9 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     private ImageButton previousButton;
     private TextView endTimeTextView;
     private SeekBar seekbar;
+    private int position;
+    private int currentPosition;
+    private int currentTime;
 
     public static MediaPlayerFragment newInstance(ArrayList<CustomTrack> trackList, int track, String name) {
         MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
@@ -88,7 +92,10 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
             MediaPlayerBinder binder = (MediaPlayerBinder) service;
             mediaPlayerService = binder.getService();
             mediaPlayerService.setMediaPlayerViews(getView());
+            SeekBar mSeekbar = ((SeekBar)getView().findViewById(R.id.track_duration_seekbar));
+            mSeekbar.setMax(30000);
             mediaPlayerService.startMediaPlayer(customTracksList.get(selectedTrack).getPreviewUrl());
+
             musicBound = true;
         }
 
@@ -102,6 +109,9 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(SELECTED_TRACK, selectedTrack);
+        currentTime = mediaPlayerService.getCurrentPosition();
+        outState.putInt("current_time", currentTime);
+
     }
 
     @Override
@@ -109,6 +119,10 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
             selectedTrack = savedInstanceState.getInt(SELECTED_TRACK);
+            currentTime = savedInstanceState.getInt("current_time");
+//            mediaPlayerService.setSeekProgress(currentTime);
+            Log.v("CURRENT_TIME", "The current time is " + currentTime);
+
             setTrackInfo();
         }
     }
@@ -146,6 +160,8 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 
         seekbar = (SeekBar) rootView.findViewById(R.id.track_duration_seekbar);
         seekbar.setOnSeekBarChangeListener(this);
+        seekbar.setProgress(currentTime);
+
 
         nextButton = (ImageButton) rootView.findViewById(R.id.next_button);
         nextButton.setOnClickListener(this);
@@ -179,6 +195,8 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         artistNameTextView.setText(artistName);
         albumNameTextView.setText(customTracksList.get(selectedTrack).getAlbumName());
         trackNameTextView.setText(customTracksList.get(selectedTrack).getTrackName());
+
+//        mediaPlayerService.seekToPosition(currentPosition);
     }
 
     @Override
@@ -326,6 +344,9 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 //        if(fromUser)
 //            mediaPlayer.seekTo(progress);
+
+        position = progress;
+
     }
 
 
@@ -336,6 +357,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        mediaPlayerService.seekToPosition(position);
 
     }
 }

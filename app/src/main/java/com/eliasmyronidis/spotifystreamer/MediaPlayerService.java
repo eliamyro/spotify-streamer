@@ -31,10 +31,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private Handler mHandler = new Handler();
 
 
-    private Runnable updateProgress = new Runnable() {
+    public static int currentPosition;
+    public Runnable updateProgress = new Runnable() {
         @Override
         public void run() {
-            int currentPosition = mediaPlayer.getCurrentPosition();
+            currentPosition = mediaPlayer.getCurrentPosition();
             seekbar.setProgress(currentPosition);
             startTimeTextView.setText(Utility.getTimeFormated(currentPosition));
             mHandler.postDelayed(this,1000);
@@ -75,6 +76,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         }
     }
 
+    public void setSeekProgress(int progress){
+        mHandler.removeCallbacks(updateProgress);
+        currentPosition = progress;
+        mHandler.postDelayed(updateProgress, 1000);
+    }
 
     /**
      * Sets the mediaplayer.
@@ -124,9 +130,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mHandler.postDelayed(updateProgress, 1000);
     }
 
+
     @Override
     public void onCompletion(MediaPlayer mp) {
-        mediaPlayer.seekTo(0);
+        mHandler.removeCallbacks(updateProgress);
+//        mediaPlayer.seekTo(0);
+        seekbar.setProgress(0);
         playPauseButton.setImageResource(android.R.drawable.ic_media_play);
     }
 
@@ -168,6 +177,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             playPauseButton.setImageResource(android.R.drawable.ic_media_play);
         } else if (!mediaPlayer.isPlaying() && nextPressed != true) {
             mediaPlayer.start();
+            mHandler.postDelayed(updateProgress,1000);
             playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
         } else {
             nextPressed = false;
@@ -181,6 +191,18 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public void previousTrack(String trackUrl){
         startMediaPlayer(trackUrl);
+    }
+
+    public void seekToPosition(int currentPosition){
+        mHandler.removeCallbacks(updateProgress);
+        mediaPlayer.seekTo(currentPosition);
+        mHandler.postDelayed(updateProgress, 1000);
+    }
+
+    public int getCurrentPosition(){
+        if(mediaPlayer.isPlaying())
+                return mediaPlayer.getCurrentPosition();
+        return 0;
     }
 
 }
