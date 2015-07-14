@@ -90,21 +90,24 @@
             android:layout_width="100dp"
             android:layout_height="48dp"
             android:src="@android:drawable/ic_media_previous"
-            android:layout_margin="3dp"/>
+            android:layout_margin="3dp"
+            android:background="@drawable/button_selector"/>
 
         <ImageButton
             android:id="@+id/play_button"
             android:layout_width="100dp"
             android:layout_height="48dp"
             android:src="@android:drawable/ic_media_pause"
-            android:layout_margin="3dp"/>
+            android:layout_margin="3dp"
+            android:background="@drawable/button_selector"/>
 
         <ImageButton
             android:id="@+id/next_button"
             android:layout_width="100dp"
             android:layout_height="48dp"
             android:src="@android:drawable/ic_media_next"
-            android:layout_margin="3dp"/>
+            android:layout_margin="3dp"
+            android:background="@drawable/button_selector"/>
 
     </LinearLayout>
 

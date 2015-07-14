@@ -84,23 +84,29 @@
         <ImageButton
             android:id="@+id/previous_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:src="@android:drawable/ic_media_previous" />
+            android:layout_margin="3dp"
+            android:src="@android:drawable/ic_media_previous"
+            android:background="@drawable/button_selector"/>
 
         <ImageButton
             android:id="@+id/play_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:src="@android:drawable/ic_media_play" />
+            android:layout_margin="3dp"
+            android:src="@android:drawable/ic_media_play"
+            android:background="@drawable/button_selector"/>
 
         <ImageButton
             android:id="@+id/next_button"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:src="@android:drawable/ic_media_next" />
+            android:layout_margin="3dp"
+            android:src="@android:drawable/ic_media_next"
+            android:background="@drawable/button_selector"/>
 
     </LinearLayout>
 

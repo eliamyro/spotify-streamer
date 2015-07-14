@@ -2,6 +2,9 @@
 <resources>
 
     <color name="grey">#cccccc</color>
-    <color name="light_blue">#ff64c2f4</color>
+    <color name="spotify_green">#8BC34A</color>
+    <color name="spotify_light_green">#AED581</color>
+    <color name="spotify_dark_green">#689F38</color>
+
 
 </resources>
