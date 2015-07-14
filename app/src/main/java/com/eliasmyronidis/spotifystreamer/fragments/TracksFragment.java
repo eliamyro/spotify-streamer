@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Track;
@@ -44,8 +44,7 @@ import retrofit.client.Response;
  */
 public class TracksFragment extends Fragment {
 
-    @InjectView(R.id.track_listview)
-    ListView tracksListView;
+    @Bind(R.id.track_listview) ListView tracksListView;
     public static final String SPOTIFY_ID = "spotify_id";
     public static final String ARTIST_NAME = "artist_name";
 
@@ -61,7 +60,7 @@ public class TracksFragment extends Fragment {
 
 
         View rootView = inflater.inflate(R.layout.fragment_tracks, container, false);
-        ButterKnife.inject(this, rootView);
+        ButterKnife.bind(this, rootView);
 
 
         Bundle arguments = getArguments();
@@ -69,12 +68,6 @@ public class TracksFragment extends Fragment {
             spotifiId = arguments.getString(TracksFragment.SPOTIFY_ID);
             artistName = arguments.getString(TracksFragment.ARTIST_NAME);
         }
-
-//        Intent mIntent = getActivity().getIntent();
-//        if (mIntent != null && mIntent.hasExtra(SPOTIFY_ID) && mIntent.hasExtra(ARTIST_NAME)) {
-//            spotifiId = mIntent.getStringExtra(SPOTIFY_ID);
-//            artistName = mIntent.getStringExtra(ARTIST_NAME);
-//        }
 
         // http://stackoverflow.com/questions/18320713/getsupportactionbar-from-inside-of-fragment-actionbarcompat
         ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(artistName);
@@ -175,5 +168,11 @@ public class TracksFragment extends Fragment {
             customTracksList = savedInstanceState.getParcelableArrayList(getString(R.string.tracks_list));
             showTopTracks(customTracksList);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 }

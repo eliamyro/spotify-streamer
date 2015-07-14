@@ -2,9 +2,9 @@
 <resources>
 
     <color name="grey">#cccccc</color>
-    <color name="spotify_green">#8BC34A</color>
-    <color name="spotify_light_green">#AED581</color>
-    <color name="spotify_dark_green">#689F38</color>
+    <color name="spotify_purple">#673AB7</color>
+    <color name="spotify_light_purple">#B39DDB</color>
+    <color name="spotify_dark_purple">#512DA8</color>
 
 
 </resources>

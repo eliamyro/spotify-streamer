@@ -2,13 +2,13 @@
 
     <!-- State when a row is being pressed, but hasn't yet been activated (finger down) -->
     <item android:state_pressed="true"
-        android:drawable="@color/spotify_light_green" />
+        android:drawable="@color/spotify_light_purple" />
 
     <!-- When the view is "activated".  In SINGLE_CHOICE_MODE, it flags the active row
          of a ListView -->
     <item android:state_activated="true"
-        android:drawable="@color/spotify_green" />
+        android:drawable="@color/spotify_purple" />
 
     <!-- Default, "just hangin' out" state. -->
-    <item android:drawable="@color/spotify_green" />
+    <item android:drawable="@color/spotify_purple" />
 </selector>

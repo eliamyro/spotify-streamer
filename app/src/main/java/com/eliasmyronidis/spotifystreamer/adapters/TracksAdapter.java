@@ -12,8 +12,9 @@ import com.eliasmyronidis.spotifystreamer.beans.CustomTrack;
 import com.eliasmyronidis.spotifystreamer.R;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
+
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /**
  * Created by Elias Myronidis on 11/6/2015.
@@ -52,15 +53,12 @@ public class TracksAdapter extends ArrayAdapter<CustomTrack> {
     }
 
     class ViewHolder {
-        @InjectView(R.id.track_name_textview)
-        TextView trackName;
-        @InjectView(R.id.track_album_textview)
-        TextView albumName;
-        @InjectView(R.id.album_image)
-        ImageView albumImage;
+        @Bind(R.id.track_name_textview) TextView trackName;
+        @Bind(R.id.track_album_textview) TextView albumName;
+        @Bind(R.id.album_image) ImageView albumImage;
 
         public ViewHolder(View view) {
-            ButterKnife.inject(this, view);
+            ButterKnife.bind(this, view);
         }
 
     }

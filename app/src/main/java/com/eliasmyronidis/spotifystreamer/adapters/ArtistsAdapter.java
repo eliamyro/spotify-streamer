@@ -14,8 +14,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /**
  * Created by Elias Myronidis on 8/6/2015.
@@ -48,11 +48,11 @@ public class ArtistsAdapter extends ArrayAdapter<CustomArtist> {
     }
 
     class ViewHolder {
-        @InjectView(R.id.artist_name_textview)TextView artistName;
-        @InjectView(R.id.artist_image)ImageView artistImage;
+        @Bind(R.id.artist_name_textview)TextView artistName;
+        @Bind(R.id.artist_image)ImageView artistImage;
 
         public ViewHolder(View view) {
-            ButterKnife.inject(this, view);
+            ButterKnife.bind(this, view);
         }
     }
 }

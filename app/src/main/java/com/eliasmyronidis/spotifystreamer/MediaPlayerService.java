@@ -15,19 +15,24 @@ import android.widget.TextView;
 
 import java.io.IOException;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Elias Myronidis on 10/7/15.
  */
 public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
 
+    @Bind(R.id.play_button) ImageButton playPauseButton;
+    @Bind(R.id.track_duration_seekbar) SeekBar seekbar;
+    @Bind(R.id.start_time_textview) TextView startTimeTextView;
+    @Bind(R.id.end_time_textview) TextView endTimeTextView;
+
     private MediaPlayer mediaPlayer;
     private final IBinder musicBind = new MediaPlayerBinder();
-    private ImageButton playPauseButton;
     private String mTrackUrl;
     private boolean nextPressed;
-    private SeekBar seekbar;
-    private TextView startTimeTextView;
-    private TextView endTimeTextView;
+
     private int trackDuration;
     private Handler mHandler = new Handler();
 
@@ -153,11 +158,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
      * @param mediaPlayerView the views of the media player.
      */
     public void setMediaPlayerViews(View mediaPlayerView) {
-        playPauseButton = (ImageButton) mediaPlayerView.findViewById(R.id.play_button);
-        seekbar = (SeekBar)mediaPlayerView.findViewById(R.id.track_duration_seekbar);
-
-        startTimeTextView = (TextView)mediaPlayerView.findViewById(R.id.start_time_textview);
-        endTimeTextView = (TextView)mediaPlayerView.findViewById(R.id.end_time_textview);
+        ButterKnife.bind(this,mediaPlayerView);
         endTimeTextView.setText(Utility.getTimeFormated(trackDuration));
 
     }

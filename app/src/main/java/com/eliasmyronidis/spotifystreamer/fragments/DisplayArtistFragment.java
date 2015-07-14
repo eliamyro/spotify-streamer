@@ -14,8 +14,9 @@ import com.eliasmyronidis.spotifystreamer.R;
 import com.eliasmyronidis.spotifystreamer.adapters.ArtistsAdapter;
 import com.eliasmyronidis.spotifystreamer.beans.CustomArtist;
 import java.util.ArrayList;
+
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
@@ -29,10 +30,8 @@ import retrofit.client.Response;
  */
 public class DisplayArtistFragment extends Fragment {
     private static final String SELECTED_KEY = "selected_key";
-    @InjectView(R.id.searchView)
-    SearchView searchView;
-    @InjectView(R.id.artist_listview)
-    ListView mArtistsListView;
+    @Bind(R.id.searchView) SearchView searchView;
+    @Bind(R.id.artist_listview) ListView mArtistsListView;
 
     private ArrayAdapter<CustomArtist> artistsAdapter;
     private ArrayList<CustomArtist> customArtistsList;
@@ -46,7 +45,7 @@ public class DisplayArtistFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_display_artist, container, false);
-        ButterKnife.inject(this, rootView);
+        ButterKnife.bind(this, rootView);
 
         artistsAdapter = new ArtistsAdapter(getActivity(), new ArrayList<CustomArtist>());
         mArtistsListView.setAdapter(artistsAdapter);
@@ -160,7 +159,11 @@ public class DisplayArtistFragment extends Fragment {
             if (mPosition != ListView.INVALID_POSITION)
                 mArtistsListView.smoothScrollToPosition(mPosition);
         }
+    }
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 }

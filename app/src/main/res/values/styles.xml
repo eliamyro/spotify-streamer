@@ -2,8 +2,8 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/spotify_green</item>
-        <item name="colorPrimaryDark">@color/spotify_dark_green</item>
+        <item name="colorPrimary">@color/spotify_purple</item>
+        <item name="colorPrimaryDark">@color/spotify_dark_purple</item>
     </style>
 
     <style name="ArtistListStyle">

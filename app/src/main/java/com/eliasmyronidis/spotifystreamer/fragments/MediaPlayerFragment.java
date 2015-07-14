@@ -30,21 +30,27 @@ import java.util.ArrayList;
 
 import com.eliasmyronidis.spotifystreamer.MediaPlayerService.MediaPlayerBinder;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Elias Myronidis on 27/6/2015.
  */
 public class MediaPlayerFragment extends DialogFragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+    @Bind(R.id.track_duration_seekbar) SeekBar mSeekbar;
+    @Bind(R.id.artist_name_textview) TextView artistNameTextView;
+    @Bind(R.id.album_name_textview) TextView albumNameTextView;
+    @Bind(R.id.album_artwork_imageview) ImageView albumArtworkImageView;
+    @Bind(R.id.track_name_textview) TextView trackNameTextView;
+    @Bind(R.id.play_button) ImageButton playButton;
+    @Bind(R.id.next_button) ImageButton nextButton;
+    @Bind(R.id.previous_button) ImageButton previousButton;
 
-    int selectedTrack;
     ArrayList<CustomTrack> customTracksList;
-    TextView artistNameTextView;
-    private TextView albumNameTextView;
-    private ImageView albumeArtworkImageView;
-    private TextView trackNameTextView;
+
     private String artistName;
-
-    public TextView startTimeTextView;
-
+    private TextView startTimeTextView;
+    private int selectedTrack;
     public static final String CUSTOM_TRACKS_LIST = "custom_tracks_list";
     public static final String SELECTED_TRACK = "selected_track";
     public static final String ARTIST_NAME = "artist_name";
@@ -54,15 +60,12 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     private Intent intentService;
     private boolean musicBound = false;
     View rootView;
-    private ImageButton playButton;
-    private ImageButton nextButton;
-    private ImageButton previousButton;
-    private TextView endTimeTextView;
-    private SeekBar seekbar;
+
     private int position;
     private int currentTrackPosition;
 
     public static MediaPlayerFragment newInstance(ArrayList<CustomTrack> trackList, int track, String name) {
+
         MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
         Bundle arguments = new Bundle();
         arguments.putParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST, trackList);
@@ -81,7 +84,6 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
             mediaPlayerService = binder.getService();
             mediaPlayerService.setMediaPlayerViews(getView());
             mediaPlayerService.startMediaPlayer(customTracksList.get(selectedTrack).getPreviewUrl());
-            SeekBar mSeekbar = ((SeekBar)getView().findViewById(R.id.track_duration_seekbar));
             mSeekbar.setMax(30000);
             musicBound = true;
         }
@@ -118,11 +120,12 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
+        ButterKnife.bind(this, rootView);
 
         if (intentService == null) {
-            intentService = new Intent(getActivity().getBaseContext(), MediaPlayerService.class);
-            getActivity().getBaseContext().startService(intentService);
-            getActivity().getBaseContext().bindService(intentService, musicConnection, Context.BIND_AUTO_CREATE);
+            intentService = new Intent(getActivity(), MediaPlayerService.class);
+            getActivity().startService(intentService);
+            getActivity().bindService(intentService, musicConnection, Context.BIND_AUTO_CREATE);
 
         }
 
@@ -133,19 +136,9 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
             artistName = arguments.getString(MediaPlayerFragment.ARTIST_NAME);
         }
 
-
-        artistNameTextView = (TextView) rootView.findViewById(R.id.artist_name_textview);
-        albumNameTextView = (TextView) rootView.findViewById(R.id.album_name_textview);
-        albumeArtworkImageView = (ImageView) rootView.findViewById(R.id.album_artwork_imageview);
-        trackNameTextView = (TextView) rootView.findViewById(R.id.track_name_textview);
-        playButton = (ImageButton) rootView.findViewById(R.id.play_button);
         playButton.setOnClickListener(this);
-        startTimeTextView = (TextView) rootView.findViewById(R.id.start_time_textview);
-        endTimeTextView = (TextView) rootView.findViewById(R.id.end_time_textview);
-
-        seekbar = (SeekBar) rootView.findViewById(R.id.track_duration_seekbar);
-        seekbar.setOnSeekBarChangeListener(this);
-        seekbar.setProgress(currentTrackPosition);
+        mSeekbar.setOnSeekBarChangeListener(this);
+        mSeekbar.setProgress(currentTrackPosition);
 
 
         nextButton = (ImageButton) rootView.findViewById(R.id.next_button);
@@ -178,7 +171,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 
 
         // set's track info.
-        Picasso.with(getActivity().getBaseContext()).load(customTracksList.get(selectedTrack).getLargeImageUrl()).into(albumeArtworkImageView);
+        Picasso.with(getActivity()).load(customTracksList.get(selectedTrack).getLargeImageUrl()).into(albumArtworkImageView);
         artistNameTextView.setText(artistName);
         albumNameTextView.setText(customTracksList.get(selectedTrack).getAlbumName());
         trackNameTextView.setText(customTracksList.get(selectedTrack).getTrackName());
@@ -228,7 +221,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         super.onDestroy();
         // Unbind from the service
         if (musicBound) {
-            getActivity().getBaseContext().unbindService(musicConnection);
+            getActivity().unbindService(musicConnection);
             musicBound = false;
         }
     }
@@ -252,5 +245,11 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     public void onStopTrackingTouch(SeekBar seekBar) {
         mediaPlayerService.seekToPosition(position);
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 }
