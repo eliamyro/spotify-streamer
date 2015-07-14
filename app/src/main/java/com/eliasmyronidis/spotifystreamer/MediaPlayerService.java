@@ -31,14 +31,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private Handler mHandler = new Handler();
 
 
-    public static int currentPosition;
+    public int currentPosition;
     public Runnable updateProgress = new Runnable() {
         @Override
         public void run() {
             currentPosition = mediaPlayer.getCurrentPosition();
             seekbar.setProgress(currentPosition);
             startTimeTextView.setText(Utility.getTimeFormated(currentPosition));
-            mHandler.postDelayed(this,1000);
+            mHandler.postDelayed(this,200);
         }
     };
 
@@ -58,6 +58,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         if (!setTrackUrl(trackUrl)) {
             setMediaPlayer();
         }
+        if(mediaPlayer.isPlaying())
+            playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
+        else
+            playPauseButton.setImageResource(android.R.drawable.ic_media_play);
     }
 
 
@@ -74,12 +78,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         } else {
             return true;
         }
-    }
-
-    public void setSeekProgress(int progress){
-        mHandler.removeCallbacks(updateProgress);
-        currentPosition = progress;
-        mHandler.postDelayed(updateProgress, 1000);
     }
 
     /**
@@ -127,16 +125,19 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
         endTimeTextView.setText(Utility.getTimeFormated(trackDuration));
         mediaPlayer.start();
-        mHandler.postDelayed(updateProgress, 1000);
+        mHandler.postDelayed(updateProgress, 200);
     }
 
 
     @Override
     public void onCompletion(MediaPlayer mp) {
         mHandler.removeCallbacks(updateProgress);
-//        mediaPlayer.seekTo(0);
+
+        //TODO check if we need seekTo and SetProgress
+        mediaPlayer.seekTo(0);
         seekbar.setProgress(0);
         playPauseButton.setImageResource(android.R.drawable.ic_media_play);
+        startTimeTextView.setText(Utility.getTimeFormated(0));
     }
 
     @Override
@@ -177,7 +178,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             playPauseButton.setImageResource(android.R.drawable.ic_media_play);
         } else if (!mediaPlayer.isPlaying() && nextPressed != true) {
             mediaPlayer.start();
-            mHandler.postDelayed(updateProgress,1000);
+            mHandler.postDelayed(updateProgress,200);
             playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
         } else {
             nextPressed = false;
@@ -196,7 +197,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     public void seekToPosition(int currentPosition){
         mHandler.removeCallbacks(updateProgress);
         mediaPlayer.seekTo(currentPosition);
-        mHandler.postDelayed(updateProgress, 1000);
+        mHandler.postDelayed(updateProgress, 200);
     }
 
     public int getCurrentPosition(){

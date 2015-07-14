@@ -48,6 +48,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     public static final String CUSTOM_TRACKS_LIST = "custom_tracks_list";
     public static final String SELECTED_TRACK = "selected_track";
     public static final String ARTIST_NAME = "artist_name";
+    public static final String CURRENT_TRACK_POSITION = "current_track_position";
 
     private MediaPlayerService mediaPlayerService;
     private Intent intentService;
@@ -59,8 +60,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     private TextView endTimeTextView;
     private SeekBar seekbar;
     private int position;
-    private int currentPosition;
-    private int currentTime;
+    private int currentTrackPosition;
 
     public static MediaPlayerFragment newInstance(ArrayList<CustomTrack> trackList, int track, String name) {
         MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
@@ -73,18 +73,6 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     }
 
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//
-//        if(playIntent == null){
-//            playIntent = new Intent(getActivity(), MediaPlayerService.class);
-//            mediaPlayerService.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-//            mediaPlayerService.startService(playIntent);
-//        }
-//    }
-
-
     // connect to the service
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
@@ -92,10 +80,9 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
             MediaPlayerBinder binder = (MediaPlayerBinder) service;
             mediaPlayerService = binder.getService();
             mediaPlayerService.setMediaPlayerViews(getView());
+            mediaPlayerService.startMediaPlayer(customTracksList.get(selectedTrack).getPreviewUrl());
             SeekBar mSeekbar = ((SeekBar)getView().findViewById(R.id.track_duration_seekbar));
             mSeekbar.setMax(30000);
-            mediaPlayerService.startMediaPlayer(customTracksList.get(selectedTrack).getPreviewUrl());
-
             musicBound = true;
         }
 
@@ -109,8 +96,8 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(SELECTED_TRACK, selectedTrack);
-        currentTime = mediaPlayerService.getCurrentPosition();
-        outState.putInt("current_time", currentTime);
+        currentTrackPosition = mediaPlayerService.getCurrentPosition();
+        outState.putInt(CURRENT_TRACK_POSITION, currentTrackPosition);
 
     }
 
@@ -119,20 +106,18 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
             selectedTrack = savedInstanceState.getInt(SELECTED_TRACK);
-            currentTime = savedInstanceState.getInt("current_time");
-//            mediaPlayerService.setSeekProgress(currentTime);
-            Log.v("CURRENT_TIME", "The current time is " + currentTime);
+            currentTrackPosition = savedInstanceState.getInt(CURRENT_TRACK_POSITION);
 
             setTrackInfo();
         }
     }
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
-//        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         if (intentService == null) {
             intentService = new Intent(getActivity().getBaseContext(), MediaPlayerService.class);
@@ -160,7 +145,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 
         seekbar = (SeekBar) rootView.findViewById(R.id.track_duration_seekbar);
         seekbar.setOnSeekBarChangeListener(this);
-        seekbar.setProgress(currentTime);
+        seekbar.setProgress(currentTrackPosition);
 
 
         nextButton = (ImageButton) rootView.findViewById(R.id.next_button);
@@ -190,13 +175,14 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         else if(selectedTrack==customTracksList.size()-2)
             nextButton.setEnabled(true);
 
+
+
         // set's track info.
         Picasso.with(getActivity().getBaseContext()).load(customTracksList.get(selectedTrack).getLargeImageUrl()).into(albumeArtworkImageView);
         artistNameTextView.setText(artistName);
         albumNameTextView.setText(customTracksList.get(selectedTrack).getAlbumName());
         trackNameTextView.setText(customTracksList.get(selectedTrack).getTrackName());
 
-//        mediaPlayerService.seekToPosition(currentPosition);
     }
 
     @Override
@@ -236,99 +222,6 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         }
     }
 
-//    public void nextTrack() {
-//        selectedTrack++;
-//        mediaPlayerService.setSong(customTracksList.get(selectedTrack).getPreviewUrl());
-//        mediaPlayerService.playSong();
-//    }
-
-//    public void previousTrack() {
-//        selectedTrack--;
-//        mediaPlayerService.setSong(customTracksList.get(selectedTrack).getPreviewUrl());
-//        mediaPlayerService.playSong();
-//    }
-
-    //public void playPause(){
-    //  mediaPlayerService.playPauseSong();
-//    }
-
-
-//        albumNameTextView.setText(customTracksList.get(selectedTrack).getAlbumName());
-//        Picasso.with(getActivity()).load(customTracksList.get(selectedTrack).getLargeImageUrl()).into(albumeArtworkImageView);
-//        trackNameTextView.setText(customTracksList.get(selectedTrack).getTrackName());
-//    }
-
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        mediaPlayer.release();
-//    }
-
-//    @Override
-//    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-////        if(fromUser)
-////            mediaPlayer.seekTo(progress);
-//    }
-//
-//    @Override
-//    public void onStartTrackingTouch(SeekBar seekBar) {
-//        mHandler.removeCallbacks(updateTimeTask);
-//    }
-//
-//    @Override
-//    public void onStopTrackingTouch(SeekBar seekBar) {
-//        mHandler.removeCallbacks(updateTimeTask);
-//        // int totalDuration = mp.getDuration();
-//        int currentPosition = seekBar.getProgress();
-//
-//        // forward or backward to certain seconds
-//        mediaPlayer.seekTo(currentPosition);
-//
-//        // update timer progress again
-//        updateSeekBar();
-//    }
-
-//    @Override
-//    public void run() {
-//        int currentPosition= 0;
-//        int total = 30000;
-//        while (mediaPlayer!=null && currentPosition<total) {
-//            try {
-//                Thread.sleep(1000);
-//                currentPosition= mediaPlayer.getCurrentPosition();
-//
-//            } catch (InterruptedException e) {
-//                return;
-//            } catch (Exception e) {
-//                return;
-//            }
-//            seekbar.setProgress(currentPosition);
-//
-//        }
-//    }
-
-//    public void updateSeekBar() {
-//        mHandler.postDelayed(updateTimeTask, 1000);
-//    }
-
-//    private Runnable updateTimeTask = new Runnable() {
-//        @Override
-//        public void run() {
-//            int total = 30000;
-//            int currentTime = mediaPlayer.getCurrentPosition();
-//
-//            startTimeTextView.setText("0:" + Integer.toString(currentTime / 1000));
-//            seekbar.setProgress(currentTime);
-//            mHandler.postDelayed(this, 1000);
-//        }
-//    };
-
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//
-//
-//    }
 
     @Override
     public void onDestroy() {
