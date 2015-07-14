@@ -3,24 +3,17 @@ package com.eliasmyronidis.spotifystreamer.fragments;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.view.KeyEvent;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.eliasmyronidis.spotifystreamer.R;
 import com.eliasmyronidis.spotifystreamer.adapters.ArtistsAdapter;
 import com.eliasmyronidis.spotifystreamer.beans.CustomArtist;
-
 import java.util.ArrayList;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -36,8 +29,8 @@ import retrofit.client.Response;
  */
 public class DisplayArtistFragment extends Fragment {
     private static final String SELECTED_KEY = "selected_key";
-    @InjectView(R.id.search_edit_text)
-    EditText searchEditText;
+    @InjectView(R.id.searchView)
+    SearchView searchView;
     @InjectView(R.id.artist_listview)
     ListView mArtistsListView;
 
@@ -69,55 +62,66 @@ public class DisplayArtistFragment extends Fragment {
                                                 }
         );
 
-        searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    String searchedArtist = searchEditText.getText().toString();
-                    SpotifyApi api = new SpotifyApi();
-                    SpotifyService spotifyService = api.getService();
-                    spotifyService.searchArtists(searchedArtist, new Callback<ArtistsPager>() {
-                        @Override
-                        public void success(final ArtistsPager artistsPager, final Response response) {
+            public boolean onQueryTextSubmit(String query) {
+                String searchedArtist = searchView.getQuery().toString();
+                SpotifyApi api = new SpotifyApi();
+                SpotifyService spotifyService = api.getService();
+                spotifyService.searchArtists(searchedArtist, new Callback<ArtistsPager>() {
+                    @Override
+                    public void success(final ArtistsPager artistsPager, final Response response) {
 
-                            customArtistsList = new ArrayList<CustomArtist>();
-                            for (Artist artist : artistsPager.artists.items) {
-                                customArtistsList.add(new CustomArtist(artist));
+                        customArtistsList = new ArrayList<CustomArtist>();
+                        for (Artist artist : artistsPager.artists.items) {
+                            customArtistsList.add(new CustomArtist(artist));
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (artistsPager.artists.items.isEmpty())
+                                    setSnackbarMessage(getString(R.string.no_artist_found_toast));
+                                else {
+                                    showArtists(customArtistsList);
+                                }
                             }
+                        });
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (error.getKind().equals(RetrofitError.Kind.NETWORK)) {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (artistsPager.artists.items.isEmpty())
-                                        setSnackbarMessage(getString(R.string.no_artist_found_toast));
-                                    else {
-                                        showArtists(customArtistsList);
-                                    }
+                                    setSnackbarMessage(getString(R.string.no_internet_toast));
                                 }
                             });
                         }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (error.getKind().equals(RetrofitError.Kind.NETWORK)) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        setSnackbarMessage(getString(R.string.no_internet_toast));
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-                return false;
+                    }
+                });
+                return true;
             }
-        });
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
-            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+
+
+        @Override
+        public boolean onQueryTextChange (String newText){
+            return false;
         }
-        return rootView;
     }
+
+    );
+
+
+    if(savedInstanceState!=null&&savedInstanceState.containsKey(SELECTED_KEY))
+
+    {
+        mPosition = savedInstanceState.getInt(SELECTED_KEY);
+    }
+
+    return rootView;
+}
 
     private void showArtists(ArrayList<CustomArtist> customArtistsList) {
 
