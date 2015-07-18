@@ -1,8 +1,8 @@
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment"
+    android:id="@+id/display_artist_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
-    android:name="com.eliasmyronidis.spotifystreamer.DisplayArtistFragment"
+    android:name="com.eliasmyronidis.spotifystreamer.fragments.DisplayArtistFragment"
     tools:layout="@layout/fragment_display_artist" />

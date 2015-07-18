@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100"
+    android:padding="8dp"
+    android:background="@android:color/white"
+    android:clickable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/artist_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Coldplay" />
+
+        <TextView
+            android:id="@+id/album_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Ghost stories" />
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/album_artwork_imageview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="60"
+        android:gravity="center_horizontal"
+        android:src="@drawable/ghost_stories"
+        android:layout_margin="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/track_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" />
+
+        <SeekBar
+            android:id="@+id/track_duration_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/start_time_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:layout_alignParentLeft="true"/>
+
+            <TextView
+                android:id="@+id/end_time_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/previous_button"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_media_previous"
+            android:layout_margin="3dp"
+            android:background="@drawable/button_selector"/>
+
+        <ImageButton
+            android:id="@+id/play_button"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_media_play"
+            android:layout_margin="3dp"
+            android:background="@drawable/button_selector"/>
+
+        <ImageButton
+            android:id="@+id/next_button"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_media_next"
+            android:layout_margin="3dp"
+            android:background="@drawable/button_selector"/>
+
+    </LinearLayout>
+
+</LinearLayout>

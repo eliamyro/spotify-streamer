@@ -1,4 +1,4 @@
-package com.eliasmyronidis.spotifystreamer;
+package com.eliasmyronidis.spotifystreamer.beans;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:minHeight="?android:attr/listPreferredItemHeight">
 
     <ImageView
         android:id="@+id/album_image"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="?android:attr/listPreferredItemHeight"
+        android:layout_height="?android:attr/listPreferredItemHeight"
         android:layout_marginRight="10dp"
-        android:gravity="center_vertical|left"
         android:src="@drawable/abc_switch_thumb_material"/>
 
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:minHeight="?android:attr/listPreferredItemHeightLarge">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/track_name_textview"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Elias Myrondis" />
 
         <TextView
             android:id="@+id/track_album_textview"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Elias Myrondis" />
     </LinearLayout>
