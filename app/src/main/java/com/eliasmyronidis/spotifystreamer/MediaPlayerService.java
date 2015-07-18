@@ -7,26 +7,13 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.design.widget.Snackbar;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.SeekBar;
-import android.widget.TextView;
-
+import android.support.v4.content.LocalBroadcastManager;
 import java.io.IOException;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 /**
  * Created by Elias Myronidis on 10/7/15.
  */
 public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
-
-    @Bind(R.id.play_button) ImageButton playPauseButton;
-    @Bind(R.id.track_duration_seekbar) SeekBar seekbar;
-    @Bind(R.id.start_time_textview) TextView startTimeTextView;
-    @Bind(R.id.end_time_textview) TextView endTimeTextView;
 
     private MediaPlayer mediaPlayer;
     private final IBinder musicBind = new MediaPlayerBinder();
@@ -35,15 +22,18 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private int trackDuration;
     private Handler mHandler = new Handler();
-
-
     public int currentPosition;
+
+    private Intent mIntent;
+
     public Runnable updateProgress = new Runnable() {
         @Override
         public void run() {
             currentPosition = mediaPlayer.getCurrentPosition();
-            seekbar.setProgress(currentPosition);
-            startTimeTextView.setText(Utility.getTimeFormated(currentPosition));
+            mIntent = new Intent("seekbar_progress");
+            mIntent.putExtra("track_progress", currentPosition);
+            sendSeekbarProgress(mIntent);
+
             mHandler.postDelayed(this,200);
         }
     };
@@ -64,10 +54,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         if (!setTrackUrl(trackUrl)) {
             setMediaPlayer();
         }
-        if(mediaPlayer.isPlaying())
-            playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
-        else
-            playPauseButton.setImageResource(android.R.drawable.ic_media_play);
     }
 
 
@@ -101,7 +87,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         setListeners();
 
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
         try {
             mediaPlayer.setDataSource(mTrackUrl);
             mediaPlayer.prepareAsync();
@@ -115,7 +100,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
      * Sets the mediaPlayer listeners.
      */
     public void setListeners() {
-
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.setOnErrorListener(this);
@@ -124,16 +108,28 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
-
         trackDuration = mediaPlayer.getDuration();
-        seekbar.setMax(trackDuration);
 
-        endTimeTextView.setText(Utility.getTimeFormated(trackDuration));
+        mIntent = new Intent("media_started");
+        mIntent.putExtra("trackDuration", trackDuration);
+        sendMediaStartedBroadcast(mIntent);
+
         mediaPlayer.start();
+
         mHandler.postDelayed(updateProgress, 200);
     }
 
+    private void sendMediaStartedBroadcast(Intent mIntent){
+        LocalBroadcastManager.getInstance(this).sendBroadcast(mIntent);
+    }
+
+    private void sendSeekbarProgress(Intent mIntent){
+        LocalBroadcastManager.getInstance(this).sendBroadcast(mIntent);
+    }
+
+    private void sendMediaCompletedBroadcast(Intent mIntent){
+        LocalBroadcastManager.getInstance(this).sendBroadcast(mIntent);
+    }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
@@ -141,26 +137,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
         //TODO check if we need seekTo and SetProgress
         mediaPlayer.seekTo(0);
-        seekbar.setProgress(0);
-        playPauseButton.setImageResource(android.R.drawable.ic_media_play);
-        startTimeTextView.setText(Utility.getTimeFormated(0));
+        mIntent = new Intent("media_completed");
+        sendMediaCompletedBroadcast(mIntent);
     }
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         return false;
-    }
-
-
-    /**
-     * Sets the views of the media player.
-     *
-     * @param mediaPlayerView the views of the media player.
-     */
-    public void setMediaPlayerViews(View mediaPlayerView) {
-        ButterKnife.bind(this,mediaPlayerView);
-        endTimeTextView.setText(Utility.getTimeFormated(trackDuration));
-
     }
 
     @Override
@@ -177,11 +160,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     public void playPauseTrack() {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-            playPauseButton.setImageResource(android.R.drawable.ic_media_play);
         } else if (!mediaPlayer.isPlaying() && nextPressed != true) {
             mediaPlayer.start();
             mHandler.postDelayed(updateProgress,200);
-            playPauseButton.setImageResource(android.R.drawable.ic_media_pause);
         } else {
             nextPressed = false;
             startMediaPlayer(mTrackUrl);
@@ -201,11 +182,4 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mediaPlayer.seekTo(currentPosition);
         mHandler.postDelayed(updateProgress, 200);
     }
-
-    public int getCurrentPosition(){
-        if(mediaPlayer.isPlaying())
-                return mediaPlayer.getCurrentPosition();
-        return 0;
-    }
-
 }

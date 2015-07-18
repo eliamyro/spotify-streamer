@@ -1,15 +1,18 @@
 package com.eliasmyronidis.spotifystreamer.fragments;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +22,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eliasmyronidis.spotifystreamer.MediaPlayerService;
 import com.eliasmyronidis.spotifystreamer.R;
+import com.eliasmyronidis.spotifystreamer.Utility;
 import com.eliasmyronidis.spotifystreamer.beans.CustomTrack;
 import com.squareup.picasso.Picasso;
 
@@ -37,32 +42,46 @@ import butterknife.ButterKnife;
  * Created by Elias Myronidis on 27/6/2015.
  */
 public class MediaPlayerFragment extends DialogFragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
-    @Bind(R.id.track_duration_seekbar) SeekBar mSeekbar;
-    @Bind(R.id.artist_name_textview) TextView artistNameTextView;
-    @Bind(R.id.album_name_textview) TextView albumNameTextView;
-    @Bind(R.id.album_artwork_imageview) ImageView albumArtworkImageView;
-    @Bind(R.id.track_name_textview) TextView trackNameTextView;
-    @Bind(R.id.play_button) ImageButton playButton;
-    @Bind(R.id.next_button) ImageButton nextButton;
-    @Bind(R.id.previous_button) ImageButton previousButton;
 
+    @Bind(R.id.track_duration_seekbar)
+    SeekBar mSeekbar;
+    @Bind(R.id.artist_name_textview)
+    TextView artistNameTextView;
+    @Bind(R.id.album_name_textview)
+    TextView albumNameTextView;
+    @Bind(R.id.album_artwork_imageview)
+    ImageView albumArtworkImageView;
+    @Bind(R.id.track_name_textview)
+    TextView trackNameTextView;
+    @Bind(R.id.play_button)
+    ImageButton playButton;
+    @Bind(R.id.next_button)
+    ImageButton nextButton;
+    @Bind(R.id.previous_button)
+    ImageButton previousButton;
+    @Bind(R.id.end_time_textview)
+    TextView endTimeTextView;
+    @Bind((R.id.start_time_textview))
+    TextView startTimeTextView;
     ArrayList<CustomTrack> customTracksList;
 
     private String artistName;
-    private TextView startTimeTextView;
     private int selectedTrack;
     public static final String CUSTOM_TRACKS_LIST = "custom_tracks_list";
     public static final String SELECTED_TRACK = "selected_track";
     public static final String ARTIST_NAME = "artist_name";
     public static final String CURRENT_TRACK_POSITION = "current_track_position";
-
+    public static final String TRACK_DURATION = "track_duration";
+    private static final String IS_MEDIA_PLAYING = "is_media_playing";
     private MediaPlayerService mediaPlayerService;
     private Intent intentService;
     private boolean musicBound = false;
-    View rootView;
 
     private int position;
     private int currentTrackPosition;
+    private static int trackDuration;
+    private static boolean isMediaPlaying;
+
 
     public static MediaPlayerFragment newInstance(ArrayList<CustomTrack> trackList, int track, String name) {
 
@@ -82,9 +101,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         public void onServiceConnected(ComponentName name, IBinder service) {
             MediaPlayerBinder binder = (MediaPlayerBinder) service;
             mediaPlayerService = binder.getService();
-            mediaPlayerService.setMediaPlayerViews(getView());
             mediaPlayerService.startMediaPlayer(customTracksList.get(selectedTrack).getPreviewUrl());
-            mSeekbar.setMax(30000);
             musicBound = true;
         }
 
@@ -98,8 +115,10 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(SELECTED_TRACK, selectedTrack);
-        currentTrackPosition = mediaPlayerService.getCurrentPosition();
+//        currentTrackPosition = mediaPlayerService.getCurrentPosition();
         outState.putInt(CURRENT_TRACK_POSITION, currentTrackPosition);
+        outState.putInt(TRACK_DURATION, trackDuration);
+        outState.putBoolean(IS_MEDIA_PLAYING, isMediaPlaying);
 
     }
 
@@ -109,17 +128,58 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         if (savedInstanceState != null) {
             selectedTrack = savedInstanceState.getInt(SELECTED_TRACK);
             currentTrackPosition = savedInstanceState.getInt(CURRENT_TRACK_POSITION);
-
+            trackDuration = savedInstanceState.getInt(TRACK_DURATION);
+            isMediaPlaying = savedInstanceState.getBoolean(IS_MEDIA_PLAYING);
             setTrackInfo();
         }
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter mediaPlayerFilter = new IntentFilter();
+        mediaPlayerFilter.addAction("media_started");
+        mediaPlayerFilter.addAction("media_completed");
+        mediaPlayerFilter.addAction("seekbar_progress");
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mMessageReceiver, mediaPlayerFilter);
+    }
+
+
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals("media_started")) {
+                trackDuration = intent.getIntExtra("trackDuration", 0);
+                endTimeTextView.setText(Utility.getTimeFormated(trackDuration));
+                mSeekbar.setMax(trackDuration);
+                isMediaPlaying = true;
+                playButton.setImageResource(android.R.drawable.ic_media_pause);
+            } else if (action.equals("seekbar_progress")) {
+                if (mSeekbar != null) {
+                    mSeekbar.setMax(trackDuration);
+                    currentTrackPosition = intent.getIntExtra("track_progress", 0);
+                    mSeekbar.setProgress(currentTrackPosition);
+
+                }
+                if (startTimeTextView != null)
+                    startTimeTextView.setText(Utility.getTimeFormated(currentTrackPosition));
+
+
+            } else if (action.equals("media_completed")) {
+                playButton.setImageResource(android.R.drawable.ic_media_play);
+                startTimeTextView.setText(Utility.getTimeFormated(0));
+                mSeekbar.setProgress(0);
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
         ButterKnife.bind(this, rootView);
 
         if (intentService == null) {
@@ -138,13 +198,7 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 
         playButton.setOnClickListener(this);
         mSeekbar.setOnSeekBarChangeListener(this);
-        mSeekbar.setProgress(currentTrackPosition);
-
-
-        nextButton = (ImageButton) rootView.findViewById(R.id.next_button);
         nextButton.setOnClickListener(this);
-
-        previousButton = (ImageButton) rootView.findViewById(R.id.previous_button);
         previousButton.setOnClickListener(this);
 
         setTrackInfo();
@@ -156,25 +210,28 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     public void setTrackInfo() {
 
         // Disables the previous button if it's the first track.
-        if(selectedTrack==0){
+        if (selectedTrack == 0) {
             previousButton.setEnabled(false);
-        } else if(selectedTrack==1){
+        } else
             previousButton.setEnabled(true);
-        }
 
         // Disables the next button if it's the last track.
-        if(selectedTrack==customTracksList.size()-1)
+        if (selectedTrack == customTracksList.size() - 1)
             nextButton.setEnabled(false);
-        else if(selectedTrack==customTracksList.size()-2)
+        else if (selectedTrack == customTracksList.size() - 2)
             nextButton.setEnabled(true);
-
-
 
         // set's track info.
         Picasso.with(getActivity()).load(customTracksList.get(selectedTrack).getLargeImageUrl()).into(albumArtworkImageView);
         artistNameTextView.setText(artistName);
         albumNameTextView.setText(customTracksList.get(selectedTrack).getAlbumName());
         trackNameTextView.setText(customTracksList.get(selectedTrack).getTrackName());
+        endTimeTextView.setText(Utility.getTimeFormated(trackDuration));
+
+        if(isMediaPlaying)
+            playButton.setImageResource(android.R.drawable.ic_media_pause);
+        else
+            playButton.setImageResource(android.R.drawable.ic_media_play);
 
     }
 
@@ -192,22 +249,30 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.play_button:
+                if(isMediaPlaying==true) {
+                    isMediaPlaying = false;
+                    playButton.setImageResource(android.R.drawable.ic_media_play);
+                }else {
+                    isMediaPlaying = true;
+                    playButton.setImageResource(android.R.drawable.ic_media_pause);
+                }
+
                 mediaPlayerService.playPauseTrack();
                 break;
 
             case R.id.next_button:
-
                 if (selectedTrack != customTracksList.size() - 1) {
                     selectedTrack++;
+                    isMediaPlaying = false;
                     mediaPlayerService.nextTrack(customTracksList.get(selectedTrack).getPreviewUrl());
                     setTrackInfo();
                 }
                 break;
 
             case R.id.previous_button:
-
                 if (selectedTrack != 0) {
                     selectedTrack--;
+                    isMediaPlaying = false;
                     mediaPlayerService.previousTrack(customTracksList.get(selectedTrack).getPreviewUrl());
                     setTrackInfo();
                 }
@@ -217,22 +282,22 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
+        super.onPause();
         // Unbind from the service
         if (musicBound) {
             getActivity().unbindService(musicConnection);
             musicBound = false;
         }
+
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(
+                mMessageReceiver);
     }
+
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//        if(fromUser)
-//            mediaPlayer.seekTo(progress);
-
         position = progress;
-
     }
 
 
@@ -241,11 +306,12 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
 
     }
 
+
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         mediaPlayerService.seekToPosition(position);
-
     }
+
 
     @Override
     public void onDestroyView() {

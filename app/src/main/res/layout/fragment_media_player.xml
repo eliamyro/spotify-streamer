@@ -97,7 +97,7 @@
             android:id="@+id/play_button"
             android:layout_width="100dp"
             android:layout_height="48dp"
-            android:src="@android:drawable/ic_media_pause"
+            android:src="@android:drawable/ic_media_play"
             android:layout_margin="3dp"
             android:background="@drawable/button_selector"/>
 
