@@ -37,6 +37,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             mHandler.postDelayed(this,200);
         }
     };
+    public static boolean nowPlaying;
 
 
     @Override
@@ -117,6 +118,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mediaPlayer.start();
 
         mHandler.postDelayed(updateProgress, 200);
+        nowPlaying = true;
     }
 
     private void sendMediaStartedBroadcast(Intent mIntent){
@@ -139,6 +141,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mediaPlayer.seekTo(0);
         mIntent = new Intent("media_completed");
         sendMediaCompletedBroadcast(mIntent);
+        nowPlaying = false;
     }
 
     @Override

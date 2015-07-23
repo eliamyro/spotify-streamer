@@ -4,12 +4,18 @@ package com.eliasmyronidis.spotifystreamer.activities;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.eliasmyronidis.spotifystreamer.MediaPlayerService;
 import com.eliasmyronidis.spotifystreamer.fragments.DisplayArtistFragment;
 import com.eliasmyronidis.spotifystreamer.R;
+import com.eliasmyronidis.spotifystreamer.fragments.MediaPlayerFragment;
 import com.eliasmyronidis.spotifystreamer.fragments.TracksFragment;
 
 public class MainActivity extends AppCompatActivity implements DisplayArtistFragment.ClickCallback {
@@ -55,6 +61,15 @@ public class MainActivity extends AppCompatActivity implements DisplayArtistFrag
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(settingsIntent);
             return true;
+        }
+
+        if (id == R.id.action_play_now){
+            if(MediaPlayerService.nowPlaying == true) {
+                Intent mIntent = new Intent(this, NowPlayingActivity.class);
+                startActivity(mIntent);
+
+            } else
+                Snackbar.make(findViewById(android.R.id.content), getString(R.string.no_track_is_playing),Snackbar.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);

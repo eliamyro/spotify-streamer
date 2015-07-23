@@ -36,6 +36,14 @@
                 android:value=".activities.MainActivity" />
         </activity>
         <activity
+            android:name=".activities.NowPlayingActivity"
+            android:label="@string/now_playing"
+            android:parentActivityName=".activities.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
+        <activity
             android:name=".activities.MediaPlayerActivity"
             android:label="@string/title_activity_media_player"
             android:parentActivityName=".activities.TracksActivity" >

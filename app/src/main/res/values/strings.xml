@@ -202,4 +202,6 @@
     <string name="title_activity_media_player">MediaPlayerActivity</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="no_track_is_playing">No track is playing now.</string>
 </resources>

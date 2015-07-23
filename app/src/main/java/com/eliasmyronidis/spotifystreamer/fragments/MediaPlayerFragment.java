@@ -63,10 +63,10 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     TextView endTimeTextView;
     @Bind((R.id.start_time_textview))
     TextView startTimeTextView;
-    ArrayList<CustomTrack> customTracksList;
+    static ArrayList<CustomTrack> customTracksList;
 
-    private String artistName;
-    private int selectedTrack;
+    private static String artistName;
+    private static int selectedTrack;
     public static final String CUSTOM_TRACKS_LIST = "custom_tracks_list";
     public static final String SELECTED_TRACK = "selected_track";
     public static final String ARTIST_NAME = "artist_name";
@@ -81,11 +81,11 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
     private int currentTrackPosition;
     private static int trackDuration;
     private static boolean isMediaPlaying;
-
+    public static MediaPlayerFragment mediaPlayerFragment;
 
     public static MediaPlayerFragment newInstance(ArrayList<CustomTrack> trackList, int track, String name) {
 
-        MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
+        mediaPlayerFragment = new MediaPlayerFragment();
         Bundle arguments = new Bundle();
         arguments.putParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST, trackList);
         arguments.putInt(MediaPlayerFragment.SELECTED_TRACK, track);
@@ -93,6 +93,19 @@ public class MediaPlayerFragment extends DialogFragment implements View.OnClickL
         mediaPlayerFragment.setArguments(arguments);
         return mediaPlayerFragment;
     }
+
+    public static MediaPlayerFragment getInstance(){
+        if (mediaPlayerFragment!=null){
+            Bundle arguments = new Bundle();
+            arguments.putParcelableArrayList(MediaPlayerFragment.CUSTOM_TRACKS_LIST, customTracksList);
+            arguments.putInt(MediaPlayerFragment.SELECTED_TRACK, selectedTrack);
+            arguments.putString(MediaPlayerFragment.ARTIST_NAME, artistName);
+            mediaPlayerFragment.setArguments(arguments);
+            return mediaPlayerFragment;
+        }
+        return null;
+    }
+
 
 
     // connect to the service
