@@ -3,19 +3,13 @@ package com.eliasmyronidis.spotifystreamer.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
-
 import com.eliasmyronidis.spotifystreamer.MediaPlayerService;
-import com.eliasmyronidis.spotifystreamer.fragments.DisplayArtistFragment;
 import com.eliasmyronidis.spotifystreamer.R;
-import com.eliasmyronidis.spotifystreamer.fragments.MediaPlayerFragment;
+import com.eliasmyronidis.spotifystreamer.fragments.DisplayArtistFragment;
 import com.eliasmyronidis.spotifystreamer.fragments.TracksFragment;
 
 public class MainActivity extends AppCompatActivity implements DisplayArtistFragment.ClickCallback {

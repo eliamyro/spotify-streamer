@@ -12,7 +12,6 @@
         android:id="@+id/artist_image"
         android:layout_width="?android:attr/listPreferredItemHeight"
         android:layout_height="?android:attr/listPreferredItemHeight"
-        android:src="@drawable/ghost_stories"
         android:layout_marginRight="10dp"/>
 
 

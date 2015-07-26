@@ -131,7 +131,7 @@ public class DisplayArtistFragment extends Fragment {
 
     }
 
-    public void setSnackbarMessage(String snackbarMessage) {
+    private void setSnackbarMessage(String snackbarMessage) {
         if (getActivity() != null)
             Snackbar.make(getView(), snackbarMessage, Snackbar.LENGTH_SHORT).show();
     }

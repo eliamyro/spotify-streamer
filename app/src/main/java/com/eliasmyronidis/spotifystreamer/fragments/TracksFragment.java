@@ -53,7 +53,11 @@ public class TracksFragment extends Fragment {
     private String spotifiId;
     private String artistName;
 
-    private static final String MEDIA_PLAYER_FRAGMENT_TAG = "MPFTAG";
+
+
+    public interface TracksClickCallback{
+        public void onItemSelected(ArrayList<CustomTrack> customTracksList, int position, String artistName);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,17 +81,9 @@ public class TracksFragment extends Fragment {
         tracksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                   @Override
                                                   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                      if (MainActivity.mTwoPane == false) {
-                                                          FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                                          MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment().newInstance(customTracksList, position, artistName);
-                                                          android.support.v4.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
-                                                          transaction.setTransition(android.support.v4.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                                                          transaction.replace(android.R.id.content, mediaPlayerFragment)
-                                                                  .addToBackStack(null).commit();
-                                                      } else {
-                                                          DialogFragment mediaPlayerFragment = MediaPlayerFragment.newInstance(customTracksList, position, artistName);
-                                                          mediaPlayerFragment.show(getActivity().getSupportFragmentManager(), MEDIA_PLAYER_FRAGMENT_TAG);
-                                                      }
+
+                                                      ((TracksClickCallback)getActivity()).onItemSelected(customTracksList, position, artistName);
+
                                                   }
                                               }
 
